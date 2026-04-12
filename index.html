@@ -4388,21 +4388,39 @@ async function loadSettingsPopup() {
   const { data: { user } } = await _supa.auth.getUser();
   if (!user) return;
 
-  const { data: profile } = await _supa.from('users').select('*').eq('email', user.email).single();
-  if (!profile) return;
-
-  const name = profile.username || user.email.split('@')[0];
-  document.getElementById('spAvatar').textContent   = name.charAt(0).toUpperCase();
-  document.getElementById('spUsername').textContent = name;
+  // ── Step 1: show auth info immediately (always available) ──
+  const metaName = (user.user_metadata && user.user_metadata.username) || user.email.split('@')[0];
+  document.getElementById('spAvatar').textContent   = metaName.charAt(0).toUpperCase();
+  document.getElementById('spUsername').textContent = metaName;
   document.getElementById('spEmail').textContent    = user.email;
 
-  // Newsletter toggle state
-  const subbed = !!profile.newsletter_subscribed;
-  setNewsletterToggleSP(subbed);
+  // ── Step 2: load public.users profile (for newsletter + MT5 user_id) ──
+  const { data: profile, error: profileErr } = await _supa
+    .from('users').select('*').eq('email', user.email).single();
 
-  // MT5 accounts
-  const { data: accounts } = await _supa.from('mt5_accounts').select('*').eq('user_id', profile.id).eq('is_active', true);
+  if (profileErr) console.error('[Settings] Profile load error:', profileErr.message, profileErr.code);
+
   const list = document.getElementById('spMT5List');
+
+  if (!profile) {
+    // No public.users row — still show email, but MT5 needs a profile
+    list.innerHTML = '<div style="text-align:center;padding:16px;color:#484f58;font-size:13px;background:#0d1117;border-radius:8px;">Profil konnte nicht geladen werden.<br/><span style="font-size:11px;">Bitte erneut einloggen oder neu registrieren.</span></div>';
+    return;
+  }
+
+  // Profile found — refine display with DB username
+  const name = profile.username || metaName;
+  document.getElementById('spAvatar').textContent   = name.charAt(0).toUpperCase();
+  document.getElementById('spUsername').textContent = name;
+
+  // Newsletter toggle state
+  setNewsletterToggleSP(!!profile.newsletter_subscribed);
+
+  // ── Step 3: MT5 accounts ──
+  const { data: accounts, error: mt5Err } = await _supa
+    .from('mt5_accounts').select('*').eq('user_id', profile.id).eq('is_active', true);
+
+  if (mt5Err) console.error('[Settings] MT5 load error:', mt5Err.message);
 
   if (!accounts || accounts.length === 0) {
     list.innerHTML = '<div style="text-align:center;padding:16px;color:#484f58;font-size:13px;background:#0d1117;border-radius:8px;">No accounts connected.<br/>Add your MT5 account to sync trades.</div>';
