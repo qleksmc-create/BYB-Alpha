@@ -1,3 +1,17 @@
+<div style="background:#161b22;border:1px solid #30363d;border-radius:16px;padding:28px;margin:32px 0;max-width:480px;">
+              <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#8b949e;margin-bottom:16px;">💰 What's your budget?</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <span style="font-size:13px;color:#8b949e;">Budget</span>
+                <span id="forgeSliderVal" style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;color:#26a69a;">$500</span>
+              </div>
+              <input type="range" id="forgeBudgetSlider" min="500" max="2000" step="50" value="500"
+                style="width:100%;accent-color:#26a69a;height:6px;cursor:pointer;"
+                oninput="updateForgeSlider(this.value)"/>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:#484f58;margin-top:6px;">
+                <span>$500</span><span>$1,000</span><span>$1,500</span><span>$2,000+</span>
+              </div>
+              <div id="forgeSliderTier" style="margin-top:20px;padding:14px;background:#0d1117;border-radius:10px;font-size:13px;color:#c9d1d9;line-height:1.7;"></div>
+            </div>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1377,6 +1391,19 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
 </head>
 <body>
 
+<div id="bgMesh" style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+  <div style="position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(38,166,154,.07) 0%,transparent 70%);top:-200px;left:-150px;animation:orb1 18s ease-in-out infinite;"></div>
+  <div style="position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(31,111,235,.06) 0%,transparent 70%);bottom:-100px;right:-100px;animation:orb2 22s ease-in-out infinite;"></div>
+  <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(188,140,255,.04) 0%,transparent 70%);top:40%;left:60%;animation:orb3 16s ease-in-out infinite;"></div>
+  <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(255,255,255,.012) 60px,rgba(255,255,255,.012) 61px),repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,.012) 60px,rgba(255,255,255,.012) 61px);"></div>
+</div>
+<style>
+@keyframes orb1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,60px) scale(1.1)}66%{transform:translate(-40px,80px) scale(.95)}}
+@keyframes orb2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-60px,-80px) scale(1.08)}66%{transform:translate(60px,-40px) scale(.92)}}
+@keyframes orb3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-80px,60px) scale(1.12)}}
+</style>
+
+
 <!-- ====== AUTH OVERLAY MODAL ====== -->
 <div class="auth-overlay" id="authOverlay">
   <div class="auth-modal">
@@ -1417,11 +1444,15 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
       </div>
       <div class="auth-checkbox-row">
         <input type="checkbox" id="regNewsletter" checked/>
-        <label for="regNewsletter">Subscribe to BYB Alpha newsletter</label>
+        <label for="regNewsletter">Subscribe to BYB Alpha newsletter & trading updates</label>
+      </div>
+      <div class="auth-checkbox-row">
+        <input type="checkbox" id="regAgb"/>
+        <label for="regAgb">I agree to the <span style="color:#26a69a;cursor:pointer;text-decoration:underline;" onclick="openAgbModal()">Terms & Conditions</span> *</label>
       </div>
       <div id="registerMsg" class="auth-msg"></div>
       <button class="auth-submit" id="registerBtn" onclick="handleRegister()">Create Account</button>
-      <div class="auth-divider">Registration is free — no credit card required</div>
+      <div class="auth-divider">Free account — no credit card required</div>
     </div>
   </div>
 </div>
@@ -1454,6 +1485,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         <div class="nav-user-avatar" id="navAvatar">?</div>
         <span class="nav-user-name" id="navUsername">User</span>
         <button class="btn btn-ghost" style="font-size:12px;padding:7px 14px" onclick="showPage('dashboard')">Dashboard</button>
+        <button class="btn btn-ghost" style="font-size:12px;padding:7px 14px" onclick="showPage('settings')">⚙️ Settings</button>
         <button class="btn btn-ghost" style="font-size:12px;padding:7px 14px;color:#f85149" onclick="handleLogout()">Logout</button>
       </div>
       <button class="hamburger" id="hamburger" onclick="toggleMobile()" aria-label="Menu">
@@ -2135,14 +2167,31 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
 
 <!-- ============================================================ PAGE: DASHBOARD ============================================================ -->
 <div class="page" id="page-dashboard">
-  <!-- GATE: shown when logged out -->
-  <div class="dash-gate" id="dashGate">
-    <div class="dash-gate-icon">🔒</div>
-    <div class="dash-gate-title">Login to Access Dashboard</div>
-    <div class="dash-gate-sub">Create a free account or log in to view your live trading dashboard and AlphaJournal.</div>
-    <button class="btn btn-primary" onclick="openAuthModal('login')">Login / Register — It's Free</button>
+  <!-- GATE STATE 1: Not logged in -->
+  <div class="dash-gate" id="dashGate" style="display:none;">
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:20px;padding:48px 40px;max-width:420px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5);">
+      <div style="font-size:52px;margin-bottom:16px;">🔒</div>
+      <div style="font-size:22px;font-weight:700;color:#c9d1d9;margin-bottom:10px;">Login to Access Dashboard</div>
+      <div style="font-size:14px;color:#8b949e;margin-bottom:28px;line-height:1.6;">Create a free account to view your live trading data, AlphaJournal and performance analytics.</div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="openAuthModal('login')">Login</button>
+        <button class="btn btn-ghost" onclick="openAuthModal('register')">Register Free</button>
+      </div>
+    </div>
   </div>
-  <!-- REAL DASHBOARD CONTENT: shown when logged in -->
+
+  <!-- GATE STATE 2: Logged in but no MT5 account -->
+  <div class="dash-gate" id="dashGateMT5" style="display:none;">
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:20px;padding:48px 40px;max-width:440px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5);">
+      <div style="font-size:52px;margin-bottom:16px;">📡</div>
+      <div style="font-size:22px;font-weight:700;color:#c9d1d9;margin-bottom:10px;">Connect your MT5 Account</div>
+      <div style="font-size:14px;color:#8b949e;margin-bottom:8px;line-height:1.6;">Add your MetaTrader 5 account to sync your trades, view your journal and track your performance in real time.</div>
+      <div style="font-size:12px;color:#484f58;margin-bottom:28px;">🔒 Your credentials are encrypted and never shared</div>
+      <button class="btn btn-primary" style="width:100%;padding:14px;" onclick="openMT5Modal()">➕ Add MT5 Account</button>
+    </div>
+  </div>
+
+  <!-- REAL DASHBOARD CONTENT: shown when logged in + has MT5 -->
   <div id="dashContent" style="display:none">
   <section class="section">
     <div class="container">
@@ -4086,25 +4135,7 @@ async function updateNavForUser(user) {
   }
 }
 
-// ── Override showPage to protect dashboard ──
-const _originalShowPage = showPage;
-window.showPage = function(page) {
-  _originalShowPage(page);
-  if (page === 'dashboard') {
-    _supa.auth.getUser().then(( { data: { user } } ) => {
-      const gate    = document.getElementById('dashGate');
-      const content = document.getElementById('dashContent');
-      if (user) {
-        gate.style.display    = 'none';
-        content.style.display = 'block';
-        drawDashCharts();
-      } else {
-        gate.style.display    = 'flex';
-        content.style.display = 'none';
-      }
-    });
-  }
-};
+// showPage override handled in new JS block below
 
 // ── On page load: restore session ──
 _supa.auth.getSession().then(( { data: { session } } ) => {
@@ -4116,6 +4147,221 @@ _supa.auth.onAuthStateChange((event, session) => {
   updateNavForUser(session?.user || null);
 });
 
+
+/* ====== AGB MODAL ====== */
+function openAgbModal() {
+  document.getElementById('agbOverlay').classList.add('open');
+}
+function closeAgbModal() {
+  document.getElementById('agbOverlay').classList.remove('open');
+}
+function acceptAgb() {
+  document.getElementById('regAgb').checked = true;
+  closeAgbModal();
+}
+
+/* ====== MT5 MODAL ====== */
+function openMT5Modal() {
+  document.getElementById('mt5Overlay').classList.add('open');
+}
+function closeMT5Modal() {
+  document.getElementById('mt5Overlay').classList.remove('open');
+  const msg = document.getElementById('mt5Msg');
+  msg.className = 'auth-msg'; msg.textContent = '';
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const mt5Ov = document.getElementById('mt5Overlay');
+  if (mt5Ov) mt5Ov.addEventListener('click', e => { if (e.target === mt5Ov) closeMT5Modal(); });
+  const agbOv = document.getElementById('agbOverlay');
+  if (agbOv) agbOv.addEventListener('click', e => { if (e.target === agbOv) closeAgbModal(); });
+});
+
+/* ====== ADD MT5 ACCOUNT ====== */
+async function handleAddMT5() {
+  const label    = document.getElementById('mt5Label').value.trim();
+  const login    = document.getElementById('mt5Login').value.trim();
+  const password = document.getElementById('mt5Password').value;
+  const server   = document.getElementById('mt5Server').value.trim();
+  const btn      = document.getElementById('mt5Btn');
+  const msg      = document.getElementById('mt5Msg');
+
+  if (!login || !password || !server) {
+    msg.textContent = 'Please fill in Login, Password and Server.';
+    msg.className = 'auth-msg error';
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Connecting...';
+
+  // Get current user's profile id from public.users
+  const { data: { user } } = await _supa.auth.getUser();
+  if (!user) { msg.textContent = 'Not logged in.'; msg.className='auth-msg error'; btn.disabled=false; btn.textContent='Connect Account'; return; }
+
+  const { data: profile } = await _supa.from('users').select('id').eq('email', user.email).single();
+  if (!profile) { msg.textContent = 'User profile not found.'; msg.className='auth-msg error'; btn.disabled=false; btn.textContent='Connect Account'; return; }
+
+  const { error } = await _supa.from('mt5_accounts').insert({
+    user_id: profile.id,
+    mt5_login: parseInt(login),
+    mt5_password_encrypted: btoa(password), // base64 for provisional storage
+    mt5_server: server,
+    label: label || server,
+    is_active: true
+  });
+
+  if (error) {
+    msg.textContent = 'Error: ' + error.message;
+    msg.className = 'auth-msg error';
+    btn.disabled = false; btn.textContent = 'Connect Account';
+    return;
+  }
+
+  msg.textContent = '✅ Account connected successfully!';
+  msg.className = 'auth-msg success';
+  btn.textContent = 'Connected!';
+  setTimeout(() => {
+    closeMT5Modal();
+    btn.disabled = false; btn.textContent = 'Connect Account';
+    // Reload dashboard
+    showPage('dashboard');
+    loadSettingsPage();
+  }, 1500);
+}
+
+/* ====== 3-STATE DASHBOARD ====== */
+async function checkDashboardState() {
+  const { data: { user } } = await _supa.auth.getUser();
+
+  const gate    = document.getElementById('dashGate');
+  const gateMT5 = document.getElementById('dashGateMT5');
+  const content = document.getElementById('dashContent');
+
+  if (!user) {
+    gate.style.display    = 'flex';
+    gateMT5.style.display = 'none';
+    content.style.display = 'none';
+    return;
+  }
+
+  // Logged in — check for MT5 accounts
+  const { data: profile } = await _supa.from('users').select('id').eq('email', user.email).single();
+  if (!profile) { gate.style.display='flex'; gateMT5.style.display='none'; content.style.display='none'; return; }
+
+  const { data: accounts } = await _supa.from('mt5_accounts').select('id').eq('user_id', profile.id).eq('is_active', true);
+
+  if (!accounts || accounts.length === 0) {
+    gate.style.display    = 'none';
+    gateMT5.style.display = 'flex';
+    content.style.display = 'none';
+  } else {
+    gate.style.display    = 'none';
+    gateMT5.style.display = 'none';
+    content.style.display = 'block';
+    drawDashCharts();
+  }
+}
+
+/* ====== SETTINGS PAGE ====== */
+async function loadSettingsPage() {
+  const { data: { user } } = await _supa.auth.getUser();
+  if (!user) return;
+
+  const { data: profile } = await _supa.from('users').select('*').eq('email', user.email).single();
+  if (!profile) return;
+
+  // Profile info
+  const name = profile.username || user.email.split('@')[0];
+  document.getElementById('settingsUsername').textContent = name;
+  document.getElementById('settingsEmail').textContent = user.email;
+  document.getElementById('settingsAvatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('settingsNewsletter').textContent = profile.newsletter_subscribed ? '✅ Newsletter subscribed' : '';
+
+  // Newsletter toggle
+  const toggle = document.getElementById('newsletterToggle');
+  toggle.checked = !!profile.newsletter_subscribed;
+  document.getElementById('newsletterLabel').textContent = profile.newsletter_subscribed ? 'Subscribed' : 'Not subscribed';
+
+  // MT5 accounts
+  const { data: accounts } = await _supa.from('mt5_accounts').select('*').eq('user_id', profile.id);
+  const list = document.getElementById('mt5AccountsList');
+
+  if (!accounts || accounts.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:32px;color:#484f58;font-size:14px;">No MT5 accounts connected yet.<br/>Add your first account to get started.</div>';
+  } else {
+    list.innerHTML = accounts.map(acc => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;background:#0d1117;border-radius:10px;margin-bottom:10px;gap:12px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:40px;height:40px;background:linear-gradient(135deg,#26a69a,#1f6feb);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📡</div>
+          <div>
+            <div style="font-weight:700;color:#c9d1d9;font-size:14px;">${acc.label || acc.mt5_server}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8b949e;">Login: ${acc.mt5_login} · ${acc.mt5_server}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:11px;padding:3px 10px;border-radius:20px;${acc.is_active ? 'background:rgba(63,185,80,.15);color:#3fb950;border:1px solid rgba(63,185,80,.3);' : 'background:rgba(248,81,73,.1);color:#f85149;border:1px solid rgba(248,81,73,.2);'}">
+            ${acc.is_active ? '● Active' : '○ Inactive'}
+          </span>
+          <button onclick="deleteMT5Account(${acc.id})" style="background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.2);color:#f85149;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;">Remove</button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+async function deleteMT5Account(id) {
+  if (!confirm('Remove this MT5 account?')) return;
+  const { error } = await _supa.from('mt5_accounts').update({ is_active: false }).eq('id', id);
+  if (!error) loadSettingsPage();
+}
+
+async function updateNewsletter(checked) {
+  const { data: { user } } = await _supa.auth.getUser();
+  if (!user) return;
+  await _supa.from('users').update({ newsletter_subscribed: checked }).eq('email', user.email);
+  document.getElementById('newsletterLabel').textContent = checked ? 'Subscribed' : 'Not subscribed';
+  if (checked) await _supa.from('subscribers').upsert({ email: user.email, subscribed_at: new Date().toISOString() }, { onConflict: 'email' });
+}
+
+/* ====== AGB VALIDATION IN REGISTER ====== */
+// Override handleRegister to check AGB
+const _origHandleRegister = handleRegister;
+window.handleRegister = async function() {
+  if (!document.getElementById('regAgb').checked) {
+    const msg = document.getElementById('registerMsg');
+    msg.textContent = 'Please accept the Terms & Conditions to continue.';
+    msg.className = 'auth-msg error';
+    return;
+  }
+  await _origHandleRegister();
+};
+
+/* ====== ALPHAFORGE SLIDER ====== */
+function updateForgeSlider(val) {
+  const v = parseInt(val);
+  document.getElementById('forgeSliderVal').textContent = v >= 2000 ? '$2,000+' : '$' + v;
+  let tier = '';
+  if (v < 700) {
+    tier = '🟢 <strong>Entry Bot</strong> — Simple strategy, 1 trading pair, MT4/MT5, basic risk management. Delivery: 7–10 days.';
+  } else if (v < 1000) {
+    tier = '🔵 <strong>Standard Bot</strong> — Multi-pair strategy, custom indicator integration, Telegram alerts. Delivery: 10–14 days.';
+  } else if (v < 1500) {
+    tier = '🟣 <strong>Pro Bot</strong> — Advanced logic, news filters, multi-timeframe analysis, full backtesting suite. Delivery: 14–18 days.';
+  } else {
+    tier = '🏆 <strong>Apex Custom</strong> — Full institutional-grade strategy, AI entry signals, prop-firm safe mode, unlimited pairs. Delivery: 18–21 days.';
+  }
+  document.getElementById('forgeSliderTier').innerHTML = tier;
+}
+// Init slider on load
+document.addEventListener('DOMContentLoaded', () => updateForgeSlider(500));
+
+/* ====== OVERRIDE showPage for dashboard + settings ====== */
+const __origShow = showPage;
+window.showPage = function(page) {
+  __origShow(page);
+  if (page === 'dashboard') checkDashboardState();
+  if (page === 'settings')  loadSettingsPage();
+};
+
 /* ====== INIT ====== */
 window.addEventListener('load', () => { drawHeroChart(); drawPerformanceChart(); });
 window.addEventListener('resize', () => {
@@ -4124,5 +4370,92 @@ window.addEventListener('resize', () => {
   if (document.getElementById('page-dashboard').classList.contains('active')) drawDashCharts();
 });
 </script>
+
+<!-- ====== MT5 ADD ACCOUNT MODAL ====== -->
+<div class="auth-overlay" id="mt5Overlay">
+  <div class="auth-modal" style="max-width:440px;">
+    <button class="auth-modal-close" onclick="closeMT5Modal()">✕</button>
+    <div class="auth-modal-logo"><span>Connect MT5 Account</span></div>
+    <div class="auth-form" id="formMT5">
+      <div>
+        <label class="auth-label">Account Label</label>
+        <input class="auth-input" type="text" id="mt5Label" placeholder="e.g. My IC Markets Account"/>
+      </div>
+      <div>
+        <label class="auth-label">MT5 Login (Account Number)</label>
+        <input class="auth-input" type="number" id="mt5Login" placeholder="12345678"/>
+      </div>
+      <div>
+        <label class="auth-label">MT5 Password</label>
+        <input class="auth-input" type="password" id="mt5Password" placeholder="Your MT5 investor/master password"/>
+      </div>
+      <div>
+        <label class="auth-label">MT5 Server</label>
+        <input class="auth-input" type="text" id="mt5Server" placeholder="e.g. ICMarkets-Live01"/>
+      </div>
+      <div style="background:rgba(38,166,154,.08);border:1px solid rgba(38,166,154,.2);border-radius:8px;padding:12px;font-size:12px;color:#8b949e;line-height:1.6;">
+        🔒 Your MT5 credentials are stored encrypted on EU servers.<br/>
+        We recommend using your <strong style="color:#c9d1d9;">Investor Password</strong> (read-only) for maximum security.
+      </div>
+      <div id="mt5Msg" class="auth-msg"></div>
+      <button class="auth-submit" id="mt5Btn" onclick="handleAddMT5()">Connect Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SETTINGS PAGE ====== -->
+<div class="page" id="page-settings">
+  <div style="max-width:800px;margin:0 auto;padding:48px 24px;">
+
+    <div style="margin-bottom:36px;">
+      <h1 style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:1px;color:#c9d1d9;margin-bottom:6px;">Account Settings</h1>
+      <p style="color:#8b949e;font-size:15px;">Manage your profile, broker connections and preferences</p>
+    </div>
+
+    <!-- PROFILE CARD -->
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:16px;padding:28px;margin-bottom:24px;">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#8b949e;margin-bottom:20px;">Profile</div>
+      <div style="display:flex;align-items:center;gap:20px;margin-bottom:24px;">
+        <div id="settingsAvatar" style="width:56px;height:56px;background:linear-gradient(135deg,#26a69a,#1f6feb);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0;">?</div>
+        <div>
+          <div id="settingsUsername" style="font-size:18px;font-weight:700;color:#c9d1d9;">—</div>
+          <div id="settingsEmail" style="font-size:13px;color:#8b949e;margin-top:2px;">—</div>
+          <div id="settingsNewsletter" style="font-size:12px;color:#26a69a;margin-top:4px;"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn btn-ghost" style="font-size:13px;padding:8px 16px;" onclick="handleLogout()">🚪 Logout</button>
+      </div>
+    </div>
+
+    <!-- MT5 ACCOUNTS CARD -->
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:16px;padding:28px;margin-bottom:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#8b949e;">MT5 Accounts</div>
+        <button class="btn btn-primary" style="font-size:12px;padding:7px 16px;" onclick="openMT5Modal()">➕ Add Account</button>
+      </div>
+      <div id="mt5AccountsList">
+        <div style="text-align:center;padding:32px;color:#484f58;font-size:14px;">Loading accounts...</div>
+      </div>
+    </div>
+
+    <!-- NEWSLETTER CARD -->
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:16px;padding:28px;">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#8b949e;margin-bottom:16px;">Newsletter</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div>
+          <div style="color:#c9d1d9;font-size:14px;font-weight:600;margin-bottom:4px;">BYB Alpha Trading Updates</div>
+          <div style="color:#8b949e;font-size:13px;">Market insights, EA updates and new feature announcements</div>
+        </div>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="newsletterToggle" style="width:18px;height:18px;accent-color:#26a69a;" onchange="updateNewsletter(this.checked)"/>
+          <span id="newsletterLabel" style="font-size:13px;color:#8b949e;">Subscribed</span>
+        </label>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 </body>
 </html>
