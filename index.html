@@ -1599,7 +1599,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         <div>
           <div class="hero-live reveal">
             <span class="pulse"></span>
-            LIVE · <span id="activeCount">4,218</span> ACTIVE TRADERS
+            LIVE · <span id="activeCount">4,218</span> <span id="heroLiveText">ACTIVE TRADERS</span>
           </div>
           <h1 class="hero-h1 reveal reveal-d1">
             TRADE<br>
@@ -2183,11 +2183,11 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <div class="dash-gate" id="dashGate" style="display:none;">
     <div style="background:#161b22;border:1px solid #30363d;border-radius:20px;padding:48px 40px;max-width:420px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5);">
       <div style="font-size:52px;margin-bottom:16px;">🔒</div>
-      <div style="font-size:22px;font-weight:700;color:#c9d1d9;margin-bottom:10px;">Login to Access Dashboard</div>
-      <div style="font-size:14px;color:#8b949e;margin-bottom:28px;line-height:1.6;">Create a free account to view your live trading data, AlphaJournal and performance analytics.</div>
+      <div id="dashGateTitle" style="font-size:22px;font-weight:700;color:#c9d1d9;margin-bottom:10px;">Login to Access Dashboard</div>
+      <div id="dashGateSubtitle" style="font-size:14px;color:#8b949e;margin-bottom:28px;line-height:1.6;">Create a free account to view your live trading data, AlphaJournal and performance analytics.</div>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <button class="btn btn-primary" onclick="openAuthModal('login')">Login</button>
-        <button class="btn btn-ghost" onclick="openAuthModal('register')">Register Free</button>
+        <button id="dashGateBtn1" class="btn btn-primary" onclick="openAuthModal('login')">Login</button>
+        <button id="dashGateBtn2" class="btn btn-ghost" onclick="openAuthModal('register')">Register Free</button>
       </div>
     </div>
   </div>
@@ -2196,10 +2196,10 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <div class="dash-gate" id="dashGateMT5" style="display:none;">
     <div style="background:#161b22;border:1px solid #30363d;border-radius:20px;padding:48px 40px;max-width:440px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5);">
       <div style="font-size:52px;margin-bottom:16px;">📡</div>
-      <div style="font-size:22px;font-weight:700;color:#c9d1d9;margin-bottom:10px;">Connect your MT5 Account</div>
-      <div style="font-size:14px;color:#8b949e;margin-bottom:8px;line-height:1.6;">Add your MetaTrader 5 account to sync your trades, view your journal and track your performance in real time.</div>
+      <div id="dashGateMT5Title" style="font-size:22px;font-weight:700;color:#c9d1d9;margin-bottom:10px;">Connect your MT5 Account</div>
+      <div id="dashGateMT5Subtitle" style="font-size:14px;color:#8b949e;margin-bottom:8px;line-height:1.6;">Add your MetaTrader 5 account to sync your trades, view your journal and track your performance in real time.</div>
       <div style="font-size:12px;color:#484f58;margin-bottom:28px;">🔒 Your credentials are encrypted and never shared</div>
-      <button class="btn btn-primary" style="width:100%;padding:14px;" onclick="openMT5Modal()">➕ Add MT5 Account</button>
+      <button id="dashGateMT5Btn" class="btn btn-primary" style="width:100%;padding:14px;" onclick="openMT5Modal()">➕ Add MT5 Account</button>
     </div>
   </div>
 
@@ -4807,6 +4807,322 @@ window.addEventListener('resize', () => {
     </button>
   </div>
 </div>
+
+<!-- ====== LANGUAGE SWITCHER ====== -->
+<div id="langBar" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;gap:6px;background:rgba(13,17,23,0.92);border:1px solid #30363d;border-radius:40px;padding:6px 12px;backdrop-filter:blur(12px);box-shadow:0 4px 24px rgba(0,0,0,.4);">
+  <button onclick="setLanguage('en')" id="lang-en" style="background:none;border:2px solid #30363d;color:#8b949e;padding:5px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;transition:.2s;display:flex;align-items:center;gap:4px;">🇬🇧 EN</button>
+  <button onclick="setLanguage('de')" id="lang-de" style="background:none;border:2px solid #30363d;color:#8b949e;padding:5px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;transition:.2s;display:flex;align-items:center;gap:4px;">🇩🇪 DE</button>
+  <button onclick="setLanguage('es')" id="lang-es" style="background:none;border:2px solid #30363d;color:#8b949e;padding:5px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;transition:.2s;display:flex;align-items:center;gap:4px;">🇪🇸 ES</button>
+  <button onclick="setLanguage('fr')" id="lang-fr" style="background:none;border:2px solid #30363d;color:#8b949e;padding:5px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;transition:.2s;display:flex;align-items:center;gap:4px;">🇫🇷 FR</button>
+</div>
+
+<script>
+// ====== INTERNATIONALIZATION (i18n) SYSTEM ======
+const TRANSLATIONS = {
+  en: {
+    // Navigation
+    'nav-home': 'Home',
+    'nav-dashboard': 'Dashboard',
+    'nav-platforms': 'Platforms',
+    'nav-countries': 'Countries',
+    'nav-about': 'About',
+    'nav-faq': 'FAQ',
+    'nav-ai-support': 'AI Support',
+    'nav-calendar': 'Calendar',
+    'nav-contact': 'Contact',
+    'nav-login': 'Login',
+    'nav-get-started': 'Get Started',
+    'nav-logout': 'Logout',
+
+    // Hero section
+    'hero-live-text': 'ACTIVE TRADERS',
+    'hero-live': 'LIVE · X ACTIVE TRADERS',
+    'hero-h1': 'TRADE<br><span class="line-teal">SMARTER.</span><span class="line-thin">NOT HARDER.</span>',
+    'hero-sub': 'BYB Alpha builds battle-tested algorithmic trading systems for serious traders. Deploy institutional-grade Expert Advisors in minutes — or commission a fully custom bot built to your exact strategy.',
+    'hs-lbl-1': 'WIN RATE',
+    'hs-lbl-2': 'PROFIT GENERATED',
+    'hs-lbl-3': 'LIVE VERIFIED',
+    'hs-lbl-4': 'TRADER RATING',
+    'hero-btn-1': '📊 Live Dashboard',
+    'hero-btn-2': 'Commission a Custom Bot',
+
+    // Dashboard gate
+    'dashgate-title': 'Join BYB Alpha',
+    'dashgate-subtitle': 'Login or create a free account to access your personal trading dashboard.',
+    'dashgate-btn-1': 'Login',
+    'dashgate-btn-2': 'Register Free',
+    'dashgate-mt5-title':    'Connect your MT5 Account',
+    'dashgate-mt5-subtitle': 'Add your MetaTrader 5 account to sync your trades, view your journal and track your performance in real time.',
+    'dashgate-mt5-btn':      '➕ Add MT5 Account',
+
+    // Auth modal
+    'auth-tab-login': 'Login',
+    'auth-tab-register': 'Register',
+    'auth-submit-login': 'Login',
+    'auth-submit-register': 'Create Account',
+
+    // Settings
+    'settings-mt5-accounts': 'MT5 Accounts',
+    'settings-newsletter': 'Newsletter',
+    'settings-logout': 'Logout',
+
+    // Footer
+    'footer-stay-loop': 'STAY IN THE LOOP',
+    'footer-stay-sub': 'Strategy updates, market insights, and new bot launches — straight to your inbox.'
+  },
+
+  de: {
+    // Navigation
+    'nav-home': 'Startseite',
+    'nav-dashboard': 'Dashboard',
+    'nav-platforms': 'Plattformen',
+    'nav-countries': 'Länder',
+    'nav-about': 'Über uns',
+    'nav-faq': 'FAQ',
+    'nav-ai-support': 'AI Support',
+    'nav-calendar': 'Kalender',
+    'nav-contact': 'Kontakt',
+    'nav-login': 'Login',
+    'nav-get-started': 'Loslegen',
+    'nav-logout': 'Abmelden',
+
+    // Hero section
+    'hero-live-text': 'AKTIVE TRADER',
+    'hero-live': 'LIVE · X AKTIVE TRADER',
+    'hero-h1': 'HANDEL<br><span class="line-teal">SMARTER.</span><span class="line-thin">NICHT HÄRTER.</span>',
+    'hero-sub': 'BYB Alpha entwickelt kampferprobte algorithmische Handelssysteme für ernsthafte Trader. Setze institutionelle Expert Advisors in Minuten ein — oder bestelle einen vollständig maßgeschneiderten Bot.',
+    'hs-lbl-1': 'GEWINNRATE',
+    'hs-lbl-2': 'GENERIERTER PROFIT',
+    'hs-lbl-3': 'LIVE VERIFIZIERT',
+    'hs-lbl-4': 'TRADER BEWERTUNG',
+    'hero-btn-1': '📊 Live Dashboard',
+    'hero-btn-2': 'Benutzerdefinierten Bot beauftragen',
+
+    // Dashboard gate
+    'dashgate-title': 'BYB Alpha beitreten',
+    'dashgate-subtitle': 'Melde dich an oder erstelle ein kostenloses Konto, um auf dein persönliches Trading-Dashboard zuzugreifen.',
+    'dashgate-btn-1': 'Login',
+    'dashgate-btn-2': 'Kostenlos registrieren',
+    'dashgate-mt5-title':    'MT5-Konto verbinden',
+    'dashgate-mt5-subtitle': 'Füge deinen MetaTrader 5 Account hinzu, um Trades zu synchronisieren, dein Journal zu sehen und deine Performance in Echtzeit zu verfolgen.',
+    'dashgate-mt5-btn':      '➕ MT5-Konto hinzufügen',
+
+    // Auth modal
+    'auth-tab-login': 'Login',
+    'auth-tab-register': 'Registrieren',
+    'auth-submit-login': 'Login',
+    'auth-submit-register': 'Konto erstellen',
+
+    // Settings
+    'settings-mt5-accounts': 'MT5 Konten',
+    'settings-newsletter': 'Newsletter',
+    'settings-logout': 'Abmelden',
+
+    // Footer
+    'footer-stay-loop': 'BLEIB INFORMIERT',
+    'footer-stay-sub': 'Strategie-Updates, Markteinblicke und neue Bot-Starts — direkt in deinen Posteingang.'
+  },
+
+  es: {
+    // Navigation
+    'nav-home': 'Inicio',
+    'nav-dashboard': 'Dashboard',
+    'nav-platforms': 'Plataformas',
+    'nav-countries': 'Países',
+    'nav-about': 'Sobre',
+    'nav-faq': 'FAQ',
+    'nav-ai-support': 'AI Support',
+    'nav-calendar': 'Calendario',
+    'nav-contact': 'Contacto',
+    'nav-login': 'Login',
+    'nav-get-started': 'Comenzar',
+    'nav-logout': 'Cerrar sesión',
+
+    // Hero section
+    'hero-live-text': 'TRADERS ACTIVOS',
+    'hero-live': 'LIVE · X TRADERS ACTIVOS',
+    'hero-h1': 'OPERA<br><span class="line-teal">MÁS LISTO.</span><span class="line-thin">NO MÁS DURO.</span>',
+    'hero-sub': 'BYB Alpha crea sistemas de trading algorítmico probados en batalla para traders serios. Despliega Expert Advisors de grado institucional en minutos — o encarga un bot completamente personalizado.',
+    'hs-lbl-1': 'TASA DE GANANCIA',
+    'hs-lbl-2': 'BENEFICIO GENERADO',
+    'hs-lbl-3': 'VERIFICADO EN VIVO',
+    'hs-lbl-4': 'VALORACIÓN',
+    'hero-btn-1': '📊 Dashboard en Vivo',
+    'hero-btn-2': 'Encarga un Bot Personalizado',
+
+    // Dashboard gate
+    'dashgate-title': 'Únete a BYB Alpha',
+    'dashgate-subtitle': 'Inicia sesión o crea una cuenta gratuita para acceder a tu dashboard de trading personal.',
+    'dashgate-btn-1': 'Login',
+    'dashgate-btn-2': 'Registrarse gratis',
+    'dashgate-mt5-title':    'Conecta tu cuenta MT5',
+    'dashgate-mt5-subtitle': 'Añade tu cuenta de MetaTrader 5 para sincronizar tus trades, ver tu journal y seguir tu rendimiento en tiempo real.',
+    'dashgate-mt5-btn':      '➕ Añadir cuenta MT5',
+
+    // Auth modal
+    'auth-tab-login': 'Login',
+    'auth-tab-register': 'Registrarse',
+    'auth-submit-login': 'Login',
+    'auth-submit-register': 'Crear cuenta',
+
+    // Settings
+    'settings-mt5-accounts': 'Cuentas MT5',
+    'settings-newsletter': 'Newsletter',
+    'settings-logout': 'Cerrar sesión',
+
+    // Footer
+    'footer-stay-loop': 'MANTENTE ACTUALIZADO',
+    'footer-stay-sub': 'Actualizaciones de estrategia, perspectivas de mercado y nuevos lanzamientos de bots — directamente a tu bandeja de entrada.'
+  },
+
+  fr: {
+    // Navigation
+    'nav-home': 'Accueil',
+    'nav-dashboard': 'Dashboard',
+    'nav-platforms': 'Plateformes',
+    'nav-countries': 'Pays',
+    'nav-about': 'À propos',
+    'nav-faq': 'FAQ',
+    'nav-ai-support': 'AI Support',
+    'nav-calendar': 'Calendrier',
+    'nav-contact': 'Contact',
+    'nav-login': 'Login',
+    'nav-get-started': 'Démarrer',
+    'nav-logout': 'Déconnexion',
+
+    // Hero section
+    'hero-live-text': 'TRADERS ACTIFS',
+    'hero-live': 'LIVE · X TRADERS ACTIFS',
+    'hero-h1': 'TRADEZ<br><span class="line-teal">PLUS MALIN.</span><span class="line-thin">PAS PLUS DUR.</span>',
+    'hero-sub': 'BYB Alpha développe des systèmes de trading algorithmique éprouvés pour les traders sérieux. Déployez des Expert Advisors institutionnels en minutes — ou commandez un bot entièrement personnalisé.',
+    'hs-lbl-1': 'TAUX DE RÉUSSITE',
+    'hs-lbl-2': 'BÉNÉFICE GÉNÉRÉ',
+    'hs-lbl-3': 'VÉRIFIÉ EN DIRECT',
+    'hs-lbl-4': 'NOTE TRADER',
+    'hero-btn-1': '📊 Dashboard en Direct',
+    'hero-btn-2': 'Commander un Bot Personnalisé',
+
+    // Dashboard gate
+    'dashgate-title': 'Rejoindre BYB Alpha',
+    'dashgate-subtitle': 'Connectez-vous ou créez un compte gratuit pour accéder à votre tableau de bord de trading.',
+    'dashgate-btn-1': 'Login',
+    'dashgate-btn-2': "S'inscrire gratuitement",
+    'dashgate-mt5-title':    'Connectez votre compte MT5',
+    'dashgate-mt5-subtitle': 'Ajoutez votre compte MetaTrader 5 pour synchroniser vos trades, voir votre journal et suivre vos performances en temps réel.',
+    'dashgate-mt5-btn':      '➕ Ajouter un compte MT5',
+
+    // Auth modal
+    'auth-tab-login': 'Login',
+    'auth-tab-register': 'S\'inscrire',
+    'auth-submit-login': 'Login',
+    'auth-submit-register': 'Créer un compte',
+
+    // Settings
+    'settings-mt5-accounts': 'Comptes MT5',
+    'settings-newsletter': 'Newsletter',
+    'settings-logout': 'Déconnexion',
+
+    // Footer
+    'footer-stay-loop': 'RESTEZ INFORMÉ',
+    'footer-stay-sub': 'Mises à jour de stratégie, perspectives de marché et nouveaux lancements de bots — directement dans votre boîte de réception.'
+  }
+};
+
+// Translation key to selector/id mapping
+const TRANSLATION_MAP = [
+  // ── Desktop Navigation ──
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(1)', key: 'nav-home' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(2)', key: 'nav-dashboard' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(3)', key: 'nav-platforms' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(4)', key: 'nav-countries' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(5)', key: 'nav-about' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(6)', key: 'nav-faq' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(7)', key: 'nav-ai-support' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(8)', key: 'nav-calendar' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(9)', key: 'nav-contact' },
+
+  // ── Mobile Navigation ──
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(1)', key: 'nav-home' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(2)', key: 'nav-dashboard' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(3)', key: 'nav-platforms' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(4)', key: 'nav-countries' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(5)', key: 'nav-about' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(6)', key: 'nav-faq' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(7)', key: 'nav-ai-support' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(8)', key: 'nav-calendar' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(9)', key: 'nav-contact' },
+
+  // ── Nav CTA buttons ──
+  { id: null, selector: '#navLoggedOut .btn-ghost',    key: 'nav-login' },
+  { id: null, selector: '#navLoggedOut .btn-primary',  key: 'nav-get-started' },
+  { id: null, selector: '#navLoggedIn .btn-ghost',     key: 'nav-logout' },
+
+  // ── Hero ──
+  { id: 'heroLiveText',  key: 'hero-live-text' },   // only the text span, not the pulse/counter
+  { id: null, selector: '.hero-h1', key: 'hero-h1', isHTML: true },
+  { id: null, selector: '.hero-sub', key: 'hero-sub' },
+  { id: null, selector: '.hero-stats-row .hero-stat:nth-child(1) .hs-lbl', key: 'hs-lbl-1' },
+  { id: null, selector: '.hero-stats-row .hero-stat:nth-child(2) .hs-lbl', key: 'hs-lbl-2' },
+  { id: null, selector: '.hero-stats-row .hero-stat:nth-child(3) .hs-lbl', key: 'hs-lbl-3' },
+  { id: null, selector: '.hero-stats-row .hero-stat:nth-child(4) .hs-lbl', key: 'hs-lbl-4' },
+  { id: null, selector: '.hero-btns .btn-primary', key: 'hero-btn-1' },
+  { id: null, selector: '.hero-btns .btn-ghost',   key: 'hero-btn-2' },
+
+  // ── Dashboard Gate (not logged in) ──
+  { id: 'dashGateTitle',    key: 'dashgate-title' },
+  { id: 'dashGateSubtitle', key: 'dashgate-subtitle' },
+  { id: 'dashGateBtn1',     key: 'dashgate-btn-1' },
+  { id: 'dashGateBtn2',     key: 'dashgate-btn-2' },
+
+  // ── Dashboard Gate MT5 ──
+  { id: 'dashGateMT5Title',    key: 'dashgate-mt5-title' },
+  { id: 'dashGateMT5Subtitle', key: 'dashgate-mt5-subtitle' },
+  { id: 'dashGateMT5Btn',      key: 'dashgate-mt5-btn' },
+
+  // ── Auth Modal ──
+  { id: 'tabLogin',    key: 'auth-tab-login' },
+  { id: 'tabRegister', key: 'auth-tab-register' },
+  { id: 'loginBtn',    key: 'auth-submit-login' },
+  { id: 'registerBtn', key: 'auth-submit-register' },
+
+  // ── Footer Newsletter ──
+  { id: null, selector: '.fn-left h3', key: 'footer-stay-loop' },
+  { id: null, selector: '.fn-left p',  key: 'footer-stay-sub' },
+];
+
+function setLanguage(lang) {
+  if (!TRANSLATIONS[lang]) lang = 'en';
+  localStorage.setItem('byb_lang', lang);
+
+  TRANSLATION_MAP.forEach(function(item) {
+    var el = item.id
+      ? document.getElementById(item.id)
+      : (item.selector ? document.querySelector(item.selector) : null);
+    if (!el) return;
+    var text = TRANSLATIONS[lang][item.key];
+    if (!text) return;
+    if (item.isHTML) { el.innerHTML = text; } else { el.textContent = text; }
+  });
+
+  // Active button highlight
+  document.querySelectorAll('#langBar button').forEach(function(btn) {
+    btn.style.borderColor = '#30363d';
+    btn.style.color = '#8b949e';
+    btn.style.background = 'none';
+  });
+  var activeBtn = document.getElementById('lang-' + lang);
+  if (activeBtn) {
+    activeBtn.style.borderColor = '#26a69a';
+    activeBtn.style.color = '#26a69a';
+    activeBtn.style.background = 'rgba(38,166,154,.08)';
+  }
+}
+
+// Apply saved language on page load
+document.addEventListener('DOMContentLoaded', function() {
+  setLanguage(localStorage.getItem('byb_lang') || 'en');
+});
+</script>
 
 </body>
 </html>
