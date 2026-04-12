@@ -1366,6 +1366,10 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
 .auth-input{width:100%;background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:11px 14px;color:#c9d1d9;font-size:14px;font-family:'IBM Plex Sans',sans-serif;transition:.2s;outline:none}
 .auth-input:focus{border-color:#26a69a;box-shadow:0 0 0 3px rgba(38,166,154,.15)}
 .auth-input::placeholder{color:#484f58}
+.pw-wrap{position:relative;display:flex;align-items:center;}
+.pw-wrap .auth-input{padding-right:42px;}
+.pw-eye{position:absolute;right:12px;background:none;border:none;cursor:pointer;color:#484f58;padding:4px;display:flex;align-items:center;transition:color .2s;font-size:16px;line-height:1;}
+.pw-eye:hover{color:#26a69a;}
 .auth-checkbox-row{display:flex;align-items:center;gap:10px}
 .auth-checkbox-row input[type=checkbox]{width:16px;height:16px;accent-color:#26a69a;cursor:pointer;flex-shrink:0}
 .auth-checkbox-row label{font-size:13px;color:#8b949e;cursor:pointer}
@@ -1422,7 +1426,10 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
       </div>
       <div>
         <label class="auth-label">Password</label>
-        <input class="auth-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/>
+        <div class="pw-wrap">
+          <input class="auth-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/>
+          <button type="button" class="pw-eye" onclick="togglePwVis('loginPassword',this)" title="Show/hide password">👁</button>
+        </div>
       </div>
       <div id="loginMsg" class="auth-msg"></div>
       <button class="auth-submit" id="loginBtn" onclick="handleLogin()">Login</button>
@@ -1440,7 +1447,10 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
       </div>
       <div>
         <label class="auth-label">Password</label>
-        <input class="auth-input" type="password" id="regPassword" placeholder="Min. 6 characters" autocomplete="new-password"/>
+        <div class="pw-wrap">
+          <input class="auth-input" type="password" id="regPassword" placeholder="Min. 6 characters" autocomplete="new-password"/>
+          <button type="button" class="pw-eye" onclick="togglePwVis('regPassword',this)" title="Show/hide password">👁</button>
+        </div>
       </div>
       <div class="auth-checkbox-row">
         <input type="checkbox" id="regNewsletter" checked/>
@@ -2338,6 +2348,56 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
       </div>
     </div>
   </section>
+
+  <!-- ═══════════════ ALPHA JOURNAL ═══════════════ -->
+  <section class="section" style="padding-top:0;">
+    <div class="container">
+      <div class="section-header reveal" style="margin-bottom:24px;">
+        <div class="eyebrow">PRIVATE</div>
+        <div class="section-title">ALPHA <span class="teal">JOURNAL</span></div>
+        <p class="section-sub" style="margin-bottom:0">Your personal trade history synced from your connected MT5 account.</p>
+      </div>
+
+      <!-- Journal KPIs -->
+      <div id="journalKpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px;">
+        <div class="kpi-card card card-glow" style="text-align:center;">
+          <div class="kpi-label">MY TOTAL TRADES</div>
+          <div class="kpi-val" id="jKpiTrades" style="color:var(--teal)">—</div>
+        </div>
+        <div class="kpi-card card card-glow" style="text-align:center;">
+          <div class="kpi-label">MY WIN RATE</div>
+          <div class="kpi-val" id="jKpiWinRate" style="color:var(--bull)">—</div>
+        </div>
+        <div class="kpi-card card card-glow" style="text-align:center;">
+          <div class="kpi-label">MY TOTAL P&L</div>
+          <div class="kpi-val" id="jKpiPnl" style="color:var(--bull)">—</div>
+        </div>
+        <div class="kpi-card card card-glow" style="text-align:center;">
+          <div class="kpi-label">CONNECTED ACCOUNT</div>
+          <div class="kpi-val" id="jKpiAccount" style="color:var(--text2);font-size:14px;">—</div>
+        </div>
+      </div>
+
+      <!-- Journal Trade Table -->
+      <div class="trade-log card reveal">
+        <div class="log-header">
+          <span class="log-title">📓 My Trade History</span>
+          <span id="journalStatus" style="font-size:12px;color:#484f58;">Loading...</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="log-table">
+            <thead>
+              <tr><th>PAIR</th><th>DIRECTION</th><th>OPEN TIME</th><th>CLOSE TIME</th><th>LOTS</th><th>P&L</th><th>COMMENT</th></tr>
+            </thead>
+            <tbody id="journalBody">
+              <tr><td colspan="7" style="text-align:center;padding:32px;color:#484f58;">Loading your trades...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
   </div><!-- /dashContent -->
 </div><!-- /dashboard -->
 
@@ -4021,6 +4081,16 @@ function clearAuthMsgs() {
   });
 }
 
+// ── Password visibility toggle ──
+function togglePwVis(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  const isHidden = inp.type === 'password';
+  inp.type = isHidden ? 'text' : 'password';
+  btn.textContent = isHidden ? '🙈' : '👁';
+  btn.title = isHidden ? 'Hide password' : 'Show password';
+}
+
 function setAuthMsg(id, text, type) {
   const el = document.getElementById(id);
   el.textContent = text;
@@ -4252,7 +4322,7 @@ async function checkDashboardState() {
   const { data: profile } = await _supa.from('users').select('id').eq('email', user.email).single();
   if (!profile) { gate.style.display='flex'; gateMT5.style.display='none'; content.style.display='none'; return; }
 
-  const { data: accounts } = await _supa.from('mt5_accounts').select('id').eq('user_id', profile.id).eq('is_active', true);
+  const { data: accounts } = await _supa.from('mt5_accounts').select('*').eq('user_id', profile.id).eq('is_active', true);
 
   if (!accounts || accounts.length === 0) {
     gate.style.display    = 'none';
@@ -4263,6 +4333,76 @@ async function checkDashboardState() {
     gateMT5.style.display = 'none';
     content.style.display = 'block';
     drawDashCharts();
+    loadAlphaJournal(profile.id, accounts[0]);
+  }
+}
+
+async function loadAlphaJournal(userId, activeAccount) {
+  // Show connected account name
+  const accLabel = activeAccount.label || activeAccount.mt5_server || 'MT5 Account';
+  const jKpiAccount = document.getElementById('jKpiAccount');
+  if (jKpiAccount) jKpiAccount.textContent = accLabel;
+
+  // Query trade journal view
+  const { data: summary, error: sumErr } = await _supa
+    .from('user_journal_dashboard')
+    .select('*')
+    .eq('user_id', userId)
+    .single();
+
+  if (sumErr) console.error('[Journal] Summary error:', sumErr.message);
+
+  if (summary) {
+    const kpiTrades  = document.getElementById('jKpiTrades');
+    const kpiWinRate = document.getElementById('jKpiWinRate');
+    const kpiPnl     = document.getElementById('jKpiPnl');
+    if (kpiTrades)  kpiTrades.textContent  = summary.total_trades ?? '0';
+    if (kpiWinRate) kpiWinRate.textContent = summary.win_rate != null ? summary.win_rate.toFixed(1) + '%' : '—';
+    if (kpiPnl) {
+      const pnl = summary.total_pnl ?? 0;
+      kpiPnl.textContent = (pnl >= 0 ? '+' : '') + '$' + pnl.toFixed(2);
+      kpiPnl.style.color = pnl >= 0 ? 'var(--bull)' : 'var(--bear)';
+    }
+  }
+
+  // Query individual trades
+  const { data: trades, error: tradeErr } = await _supa
+    .from('user_trades_detail')
+    .select('*')
+    .eq('user_id', userId)
+    .order('close_time', { ascending: false })
+    .limit(50);
+
+  if (tradeErr) console.error('[Journal] Trades error:', tradeErr.message);
+
+  const tbody  = document.getElementById('journalBody');
+  const status = document.getElementById('journalStatus');
+
+  if (!trades || trades.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#484f58;">
+      No trades synced yet.<br/>
+      <span style="font-size:12px;">Trades will appear here once your Python backend pushes data from MT5.</span>
+    </td></tr>`;
+    if (status) status.textContent = '0 trades';
+  } else {
+    if (status) status.textContent = trades.length + ' trades';
+    tbody.innerHTML = trades.map(t => {
+      const pnl = t.profit ?? 0;
+      const dir = (t.type === 'buy' || t.type === 0) ? '<span class="trade-dir long">▲ LONG</span>' : '<span class="trade-dir short">▼ SHORT</span>';
+      const pnlClass = pnl >= 0 ? 'trade-pnl pos' : 'trade-pnl neg';
+      const pnlStr = (pnl >= 0 ? '+' : '') + '$' + pnl.toFixed(2);
+      const openTime  = t.open_time  ? new Date(t.open_time).toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'}) : '—';
+      const closeTime = t.close_time ? new Date(t.close_time).toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'}) : 'Open';
+      return `<tr>
+        <td><div class="trade-sym">${t.symbol || '—'}</div></td>
+        <td>${dir}</td>
+        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${openTime}</td>
+        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${closeTime}</td>
+        <td style="font-family:var(--font-mono);font-size:12px">${t.volume ?? '—'}</td>
+        <td class="${pnlClass}">${pnlStr}</td>
+        <td style="font-size:11px;color:var(--text3);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.comment || '—'}</td>
+      </tr>`;
+    }).join('');
   }
 }
 
@@ -4495,7 +4635,10 @@ window.addEventListener('resize', () => {
       </div>
       <div>
         <label class="auth-label">MT5 Password</label>
-        <input class="auth-input" type="password" id="mt5Password" placeholder="Your MT5 investor/master password"/>
+        <div class="pw-wrap">
+          <input class="auth-input" type="password" id="mt5Password" placeholder="Your MT5 investor/master password"/>
+          <button type="button" class="pw-eye" onclick="togglePwVis('mt5Password',this)" title="Show/hide password">👁</button>
+        </div>
       </div>
       <div>
         <label class="auth-label">MT5 Server</label>
