@@ -1482,10 +1482,12 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         <button class="btn btn-primary" style="font-size:12px;padding:7px 16px" onclick="openAuthModal('register')">Get Started</button>
       </div>
       <div id="navLoggedIn" style="display:none;" class="nav-user">
-        <div class="nav-user-avatar" id="navAvatar">?</div>
-        <span class="nav-user-name" id="navUsername">User</span>
+        <div onclick="openSettingsModal()" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 10px;border-radius:20px;border:1px solid #30363d;transition:.2s;" onmouseover="this.style.borderColor='#26a69a'" onmouseout="this.style.borderColor='#30363d'">
+          <div class="nav-user-avatar" id="navAvatar">?</div>
+          <span class="nav-user-name" id="navUsername">User</span>
+          <span style="font-size:11px;color:#484f58;">▾</span>
+        </div>
         <button class="btn btn-ghost" style="font-size:12px;padding:7px 14px" onclick="showPage('dashboard')">Dashboard</button>
-        <button class="btn btn-ghost" style="font-size:12px;padding:7px 14px" onclick="showPage('settings')">⚙️ Settings</button>
         <button class="btn btn-ghost" style="font-size:12px;padding:7px 14px;color:#f85149" onclick="handleLogout()">Logout</button>
       </div>
       <button class="hamburger" id="hamburger" onclick="toggleMobile()" aria-label="Menu">
@@ -4221,9 +4223,13 @@ async function handleAddMT5() {
   setTimeout(() => {
     closeMT5Modal();
     btn.disabled = false; btn.textContent = 'Connect Account';
-    // Reload dashboard
-    showPage('dashboard');
-    loadSettingsPage();
+    loadSettingsPopup();
+    checkDashboardState();
+    // clear inputs
+    ['mt5Label','mt5Login','mt5Password','mt5Server'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
   }, 1500);
 }
 
@@ -4310,7 +4316,10 @@ async function loadSettingsPage() {
 async function deleteMT5Account(id) {
   if (!confirm('Remove this MT5 account?')) return;
   const { error } = await _supa.from('mt5_accounts').update({ is_active: false }).eq('id', id);
-  if (!error) loadSettingsPage();
+  if (!error) {
+    loadSettingsPopup();
+    checkDashboardState();
+  }
 }
 
 async function updateNewsletter(checked) {
@@ -4359,6 +4368,88 @@ window.showPage = function(page) {
   __origShow(page);
   if (page === 'dashboard') checkDashboardState();
   if (page === 'settings')  loadSettingsPage();
+};
+
+
+/* ====== SETTINGS POPUP ====== */
+function openSettingsModal() {
+  document.getElementById('settingsOverlay').classList.add('open');
+  loadSettingsPopup();
+}
+function closeSettingsModal() {
+  document.getElementById('settingsOverlay').classList.remove('open');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const so = document.getElementById('settingsOverlay');
+  if (so) so.addEventListener('click', e => { if (e.target === so) closeSettingsModal(); });
+});
+
+async function loadSettingsPopup() {
+  const { data: { user } } = await _supa.auth.getUser();
+  if (!user) return;
+
+  const { data: profile } = await _supa.from('users').select('*').eq('email', user.email).single();
+  if (!profile) return;
+
+  const name = profile.username || user.email.split('@')[0];
+  document.getElementById('spAvatar').textContent   = name.charAt(0).toUpperCase();
+  document.getElementById('spUsername').textContent = name;
+  document.getElementById('spEmail').textContent    = user.email;
+
+  // Newsletter toggle state
+  const subbed = !!profile.newsletter_subscribed;
+  setNewsletterToggleSP(subbed);
+
+  // MT5 accounts
+  const { data: accounts } = await _supa.from('mt5_accounts').select('*').eq('user_id', profile.id).eq('is_active', true);
+  const list = document.getElementById('spMT5List');
+
+  if (!accounts || accounts.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:16px;color:#484f58;font-size:13px;background:#0d1117;border-radius:8px;">No accounts connected.<br/>Add your MT5 account to sync trades.</div>';
+  } else {
+    list.innerHTML = accounts.map(acc => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:#0d1117;border-radius:8px;margin-bottom:8px;gap:8px;">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+          <div style="width:34px;height:34px;background:linear-gradient(135deg,#26a69a,#1f6feb);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">📡</div>
+          <div style="min-width:0;">
+            <div style="font-weight:600;color:#c9d1d9;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${acc.label || acc.mt5_server}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8b949e;">${acc.mt5_login} · ${acc.mt5_server}</div>
+          </div>
+        </div>
+        <button onclick="deleteMT5Account(${acc.id})" style="background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.2);color:#f85149;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;flex-shrink:0;">✕</button>
+      </div>
+    `).join('');
+  }
+}
+
+function setNewsletterToggleSP(on) {
+  const track = document.getElementById('spNewsletterToggle');
+  const thumb = document.getElementById('spNewsletterThumb');
+  const label = document.getElementById('spNewsletterLabel');
+  if (!track) return;
+  track.style.background = on ? '#26a69a' : '#30363d';
+  thumb.style.left       = on ? '21px' : '3px';
+  thumb.style.background = on ? '#fff' : '#8b949e';
+  label.textContent      = on ? 'On' : 'Off';
+  track.dataset.state    = on ? '1' : '0';
+}
+
+async function toggleNewsletterSP() {
+  const track = document.getElementById('spNewsletterToggle');
+  const newState = track.dataset.state !== '1';
+  setNewsletterToggleSP(newState);
+  const { data: { user } } = await _supa.auth.getUser();
+  if (!user) return;
+  await _supa.from('users').update({ newsletter_subscribed: newState }).eq('email', user.email);
+  if (newState) {
+    await _supa.from('subscribers').upsert({ email: user.email, subscribed_at: new Date().toISOString() }, { onConflict: 'email' });
+  }
+}
+
+// Re-load popup after adding MT5 account
+const _origHandleAddMT5 = handleAddMT5;
+window.handleAddMT5 = async function() {
+  await _origHandleAddMT5();
 };
 
 /* ====== INIT ====== */
@@ -4453,6 +4544,55 @@ window.addEventListener('resize', () => {
       </div>
     </div>
 
+  </div>
+</div>
+
+
+<!-- ====== SETTINGS POPUP MODAL ====== -->
+<div class="auth-overlay" id="settingsOverlay" style="z-index:10000;align-items:flex-start;justify-content:flex-end;padding:80px 24px 24px 24px;">
+  <div class="auth-modal" style="max-width:440px;width:100%;max-height:85vh;overflow-y:auto;border-radius:16px;">
+    <button class="auth-modal-close" onclick="closeSettingsModal()">✕</button>
+
+    <!-- PROFILE HEADER -->
+    <div style="display:flex;align-items:center;gap:14px;padding-bottom:20px;border-bottom:1px solid #30363d;margin-bottom:20px;">
+      <div id="spAvatar" style="width:52px;height:52px;background:linear-gradient(135deg,#26a69a,#1f6feb);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0;">?</div>
+      <div>
+        <div id="spUsername" style="font-size:17px;font-weight:700;color:#c9d1d9;">—</div>
+        <div id="spEmail" style="font-size:12px;color:#8b949e;margin-top:2px;">—</div>
+      </div>
+    </div>
+
+    <!-- MT5 ACCOUNTS -->
+    <div style="margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#8b949e;">📡 MT5 Accounts</div>
+        <button onclick="openMT5Modal()" style="background:rgba(38,166,154,.12);border:1px solid rgba(38,166,154,.3);color:#26a69a;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;">+ Add</button>
+      </div>
+      <div id="spMT5List">
+        <div style="text-align:center;padding:20px;color:#484f58;font-size:13px;">Loading...</div>
+      </div>
+    </div>
+
+    <!-- NEWSLETTER -->
+    <div style="padding:16px;background:#0d1117;border-radius:10px;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:#c9d1d9;margin-bottom:2px;">Newsletter</div>
+          <div style="font-size:12px;color:#8b949e;">Trading updates & new features</div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;flex-shrink:0;">
+          <span id="spNewsletterLabel" style="font-size:12px;color:#8b949e;"></span>
+          <div id="spNewsletterToggle" onclick="toggleNewsletterSP()" style="width:40px;height:22px;border-radius:11px;background:#30363d;position:relative;cursor:pointer;transition:.3s;flex-shrink:0;">
+            <div id="spNewsletterThumb" style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#8b949e;transition:.3s;"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- LOGOUT -->
+    <button onclick="handleLogout()" style="width:100%;padding:11px;background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;color:#f85149;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;" onmouseover="this.style.background='rgba(248,81,73,.15)'" onmouseout="this.style.background='rgba(248,81,73,.08)'">
+      🚪 Logout
+    </button>
   </div>
 </div>
 
