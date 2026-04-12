@@ -4081,6 +4081,27 @@ function clearAuthMsgs() {
   });
 }
 
+// ── Sync Token copy ──
+function copySyncToken() {
+  const el = document.getElementById('spSyncToken');
+  const btn = document.getElementById('copyTokenBtn');
+  if (!el || !el.textContent || el.textContent === 'Laden...') return;
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Kopiert!';
+    btn.style.background = 'rgba(38,166,154,.25)';
+    setTimeout(() => { btn.textContent = orig; btn.style.background = 'rgba(38,166,154,.1)'; }, 2000);
+  });
+}
+
+// ── EA Download ──
+function downloadEA() {
+  // Link to the EA file on GitHub
+  const url = 'https://raw.githubusercontent.com/qleksmc-create/BYB-Alpha/main/BYB_Sync.mq5';
+  const a = document.createElement('a');
+  a.href = url; a.download = 'BYB_Sync.mq5'; a.click();
+}
+
 // ── Password visibility toggle ──
 function togglePwVis(inputId, btn) {
   const inp = document.getElementById(inputId);
@@ -4553,6 +4574,10 @@ async function loadSettingsPopup() {
   document.getElementById('spAvatar').textContent   = name.charAt(0).toUpperCase();
   document.getElementById('spUsername').textContent = name;
 
+  // Show sync token
+  const tokenEl = document.getElementById('spSyncToken');
+  if (tokenEl && profile.sync_token) tokenEl.textContent = profile.sync_token;
+
   // Newsletter toggle state
   setNewsletterToggleSP(!!profile.newsletter_subscribed);
 
@@ -4747,6 +4772,32 @@ window.addEventListener('resize', () => {
             <div id="spNewsletterThumb" style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#8b949e;transition:.3s;"></div>
           </div>
         </label>
+      </div>
+    </div>
+
+    <!-- MT5 EA SYNC SECTION -->
+    <div style="padding:16px;background:#0d1117;border-radius:10px;margin-bottom:20px;border:1px solid rgba(38,166,154,.15);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:16px;">⚡</span>
+        <div style="font-size:13px;font-weight:600;color:#c9d1d9;">MT5 Auto-Sync</div>
+      </div>
+      <div style="font-size:12px;color:#8b949e;margin-bottom:12px;line-height:1.5;">
+        Kopiere deinen persönlichen Sync-Token und füge ihn in den <strong style="color:#c9d1d9;">BYB_Sync EA</strong> ein. Der EA synct deine Trades automatisch alle 2 Minuten.
+      </div>
+
+      <!-- Sync Token display -->
+      <div style="font-size:11px;color:#484f58;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">Dein Sync-Token</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+        <div id="spSyncToken" style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8b949e;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:8px 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Laden...</div>
+        <button onclick="copySyncToken()" style="background:rgba(38,166,154,.1);border:1px solid rgba(38,166,154,.3);color:#26a69a;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px;white-space:nowrap;transition:.2s;" onmouseover="this.style.background='rgba(38,166,154,.2)'" onmouseout="this.style.background='rgba(38,166,154,.1)'" id="copyTokenBtn">📋 Kopieren</button>
+      </div>
+
+      <!-- Setup steps -->
+      <div style="font-size:11px;color:#484f58;line-height:1.8;">
+        <div>① Lade <strong style="color:#26a69a;cursor:pointer;text-decoration:underline;" onclick="downloadEA()">BYB_Sync.mq5</strong> herunter</div>
+        <div>② Öffne MT5 → Navigator → Expert Advisors → EA installieren</div>
+        <div>③ EA auf einen Chart ziehen → Token einfügen → OK</div>
+        <div>④ MT5: Extras → Optionen → Expert Advisors → WebRequest aktivieren</div>
       </div>
     </div>
 
