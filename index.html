@@ -2390,7 +2390,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
               <tr><th>PAIR</th><th>DIRECTION</th><th>OPEN TIME</th><th>CLOSE TIME</th><th>LOTS</th><th>P&L</th><th>COMMENT</th></tr>
             </thead>
             <tbody id="journalBody">
-              <tr><td colspan="7" style="text-align:center;padding:32px;color:#484f58;">Loading your trades...</td></tr>
+              <tr><td colspan="7" style="text-align:center;padding:20px;color:#484f58;font-size:13px;">Loading...</td></tr>
             </tbody>
           </table>
         </div>
@@ -4400,9 +4400,19 @@ async function loadAlphaJournal(userId, activeAccount) {
   const status = document.getElementById('journalStatus');
 
   if (!trades || trades.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#484f58;">
-      No trades synced yet.<br/>
-      <span style="font-size:12px;">Trades will appear here once your Python backend pushes data from MT5.</span>
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px 24px;">
+      <div style="font-size:36px;margin-bottom:12px;">📡</div>
+      <div style="font-size:15px;font-weight:600;color:#c9d1d9;margin-bottom:8px;">No trades synced yet</div>
+      <div style="font-size:13px;color:#484f58;margin-bottom:24px;line-height:1.6;max-width:360px;margin-left:auto;margin-right:auto;">
+        Install the <strong style="color:#c9d1d9;">BYB Sync EA</strong> in your MT5 terminal.<br/>
+        It will automatically push your trades here every 2 minutes.
+      </div>
+      <button onclick="downloadEA()" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#26a69a,#089981);border:none;color:#fff;padding:12px 24px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;letter-spacing:.3px;transition:.2s;box-shadow:0 4px 16px rgba(38,166,154,.3);" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(38,166,154,.4)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 16px rgba(38,166,154,.3)'">
+        ⬇️ Download BYB_Sync.mq5
+      </button>
+      <div style="font-size:11px;color:#30363d;margin-top:12px;">
+        Copy your Sync Token from ⚙️ Profile settings → paste into EA parameters → done
+      </div>
     </td></tr>`;
     if (status) status.textContent = '0 trades';
   } else {
