@@ -4046,7 +4046,7 @@ async function handleLogin() {
   }
 
   closeAuthModal();
-  await updateNavForUser(data.user);
+  window.location.reload();
 }
 
 // ── Register ──
@@ -4096,18 +4096,17 @@ async function handleRegister() {
     await _supa.from('subscribers').upsert({ email, subscribed_at: new Date().toISOString() }, { onConflict: 'email' });
   }
 
-  setAuthMsg('registerMsg', '✓ Account created! Check your email to confirm.', 'success');
+  setAuthMsg('registerMsg', '✓ Account created! Logging you in...', 'success');
   btn.disabled = false;
   btn.textContent = 'Create Account';
+  // Auto-reload after short delay so user sees success message
+  setTimeout(() => window.location.reload(), 1500);
 }
 
 // ── Logout ──
 async function handleLogout() {
   await _supa.auth.signOut();
-  updateNavForUser(null);
-  // If on dashboard, show the gate
-  document.getElementById('dashGate').style.display = 'flex';
-  document.getElementById('dashContent').style.display = 'none';
+  window.location.reload();
 }
 
 // ── Update Nav based on auth state ──
