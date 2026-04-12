@@ -1421,11 +1421,11 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
     <!-- LOGIN FORM -->
     <div class="auth-form" id="formLogin">
       <div>
-        <label class="auth-label">Email</label>
+        <label class="auth-label" id="lbl-login-email">Email</label>
         <input class="auth-input" type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"/>
       </div>
       <div>
-        <label class="auth-label">Password</label>
+        <label class="auth-label" id="lbl-login-pw">Password</label>
         <div class="pw-wrap">
           <input class="auth-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/>
           <button type="button" class="pw-eye" onclick="togglePwVis('loginPassword',this)" title="Show/hide password">👁</button>
@@ -1438,15 +1438,15 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
     <!-- REGISTER FORM -->
     <div class="auth-form hidden" id="formRegister">
       <div>
-        <label class="auth-label">Username</label>
+        <label class="auth-label" id="lbl-reg-user">Username</label>
         <input class="auth-input" type="text" id="regUsername" placeholder="trader_alex" autocomplete="username"/>
       </div>
       <div>
-        <label class="auth-label">Email</label>
+        <label class="auth-label" id="lbl-reg-email">Email</label>
         <input class="auth-input" type="email" id="regEmail" placeholder="you@example.com" autocomplete="email"/>
       </div>
       <div>
-        <label class="auth-label">Password</label>
+        <label class="auth-label" id="lbl-reg-pw">Password</label>
         <div class="pw-wrap">
           <input class="auth-input" type="password" id="regPassword" placeholder="Min. 6 characters" autocomplete="new-password"/>
           <button type="button" class="pw-eye" onclick="togglePwVis('regPassword',this)" title="Show/hide password">👁</button>
@@ -1724,9 +1724,9 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <section class="section">
     <div class="container">
       <div class="section-header reveal">
-        <div class="eyebrow">CAPABILITIES</div>
-        <div class="section-title">BUILT ON <span class="teal">INSTITUTIONAL</span> LOGIC</div>
-        <p class="section-sub">Every component of the Unwicked EA engine is engineered to the standard of professional trading desks — not retail hobby projects.</p>
+        <div class="eyebrow" id="ew-cap">CAPABILITIES</div>
+        <div class="section-title" id="st-cap">BUILT ON <span class="teal">INSTITUTIONAL</span> LOGIC</div>
+        <p class="section-sub" id="ss-cap">Every component of the Unwicked EA engine is engineered to the standard of professional trading desks — not retail hobby projects.</p>
       </div>
       <div class="feature-grid">
         <div class="feature-item reveal"><div class="fi-num">01 / EXECUTION</div><div class="fi-title">Sub-Millisecond Order Fill</div><div class="fi-text">Zero-latency execution modelled on institutional order routing. No slippage, no re-quotes, no excuses.</div><div class="fi-more">Learn more →</div></div>
@@ -1743,9 +1743,9 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <section class="section section-alt">
     <div class="container">
       <div class="section-header reveal">
-        <div class="eyebrow">PRICING</div>
-        <div class="section-title">ONE-TIME PAYMENT.<br><span class="teal">LIFETIME ACCESS.</span></div>
-        <p class="section-sub">No subscriptions. No profit share. No hidden fees. Buy once and own your edge forever.</p>
+        <div class="eyebrow" id="ew-pricing">PRICING</div>
+        <div class="section-title" id="st-pricing">ONE-TIME PAYMENT.<br><span class="teal">LIFETIME ACCESS.</span></div>
+        <p class="section-sub" id="ss-pricing">No subscriptions. No profit share. No hidden fees. Buy once and own your edge forever.</p>
       </div>
       <div class="pricing-grid">
         <!-- Lite -->
@@ -1810,7 +1810,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
       <!-- COMPARISON TABLE -->
       <div style="margin-top:56px">
         <div class="section-header reveal">
-          <div class="eyebrow">DETAILED SPECS</div>
+          <div class="eyebrow" id="ew-specs">DETAILED SPECS</div>
           <div class="section-title" style="font-size:36px">SIDE-BY-SIDE <span class="teal">COMPARISON</span></div>
         </div>
         <div class="comparison-table reveal reveal-d2">
@@ -1936,8 +1936,8 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
       <!-- WHY BYB ALPHA SECTION -->
       <div style="margin-top:64px">
         <div class="section-header reveal">
-          <div class="eyebrow">THE DIFFERENCE</div>
-          <div class="section-title">WHY <span class="teal">BYB ALPHA</span> WINS</div>
+          <div class="eyebrow" id="ew-diff">THE DIFFERENCE</div>
+          <div class="section-title" id="st-diff">WHY <span class="teal">BYB ALPHA</span> WINS</div>
         </div>
         <div class="why-cards reveal reveal-d2" style="grid-template-columns: repeat(3, 1fr);">
           <div class="why-card">
@@ -1998,8 +1998,8 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <section class="section section-alt">
     <div class="container">
       <div class="section-header reveal">
-        <div class="eyebrow">KEY STRENGTHS</div>
-        <div class="section-title">FOUR PILLARS OF <span class="teal">EDGE</span></div>
+        <div class="eyebrow" id="ew-pillars">KEY STRENGTHS</div>
+        <div class="section-title" id="st-pillars">FOUR PILLARS OF <span class="teal">EDGE</span></div>
       </div>
       <div class="features-grid reveal" style="grid-template-columns: repeat(4, 1fr);">
         <div class="feature-card">
@@ -2030,8 +2030,8 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <section class="section">
     <div class="container">
       <div class="section-header reveal">
-        <div class="eyebrow">SOCIAL PROOF</div>
-        <div class="section-title">TRADERS <span class="teal">TRUST</span> BYB ALPHA</div>
+        <div class="eyebrow" id="ew-social">SOCIAL PROOF</div>
+        <div class="section-title" id="st-social">TRADERS <span class="teal">TRUST</span> BYB ALPHA</div>
       </div>
       <div style="margin-top:24px">
         <div class="testimonials-carousel-wrapper">
@@ -2164,12 +2164,12 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <div class="cta-banner">
     <div class="container">
       <div class="reveal">
-        <div class="eyebrow" style="justify-content:center">START TODAY</div>
+        <div class="eyebrow" id="ew-cta" style="justify-content:center">START TODAY</div>
         <h2>READY TO <span class="teal">AUTOMATE</span>?</h2>
         <p>Join 4,218 traders already running BYB Alpha bots. Deploy today, profit tonight.</p>
         <div class="cta-btns">
-          <button class="btn btn-primary btn-lg" onclick="showPage('contact')">🚀 Get Your Bot Now</button>
-          <button class="btn btn-ghost btn-lg" onclick="toggleChatPopup()">💬 Chat with Forge AI</button>
+          <button id="cta-btn1" class="btn btn-primary btn-lg" onclick="showPage('contact')">🚀 Get Your Bot Now</button>
+          <button id="cta-btn2" class="btn btn-ghost btn-lg" onclick="toggleChatPopup()">💬 Chat with Forge AI</button>
         </div>
       </div>
     </div>
@@ -2209,9 +2209,9 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
     <div class="container">
       <div class="section-header reveal" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:32px">
         <div>
-          <div class="eyebrow">LIVE ANALYTICS</div>
-          <div class="section-title">BOT <span class="teal">PERFORMANCE</span></div>
-          <p class="section-sub" style="margin-bottom:0">Real-time metrics refreshing every 30s.</p>
+          <div class="eyebrow" id="ew-dash">LIVE ANALYTICS</div>
+          <div class="section-title" id="st-dash">BOT <span class="teal">PERFORMANCE</span></div>
+          <p class="section-sub" id="ss-dash" style="margin-bottom:0">Real-time metrics refreshing every 30s.</p>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
           <span class="badge badge-bull" style="font-size:10px;padding:5px 10px">● LIVE</span>
@@ -2353,9 +2353,9 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <section class="section" style="padding-top:0;">
     <div class="container">
       <div class="section-header reveal" style="margin-bottom:24px;">
-        <div class="eyebrow">PRIVATE</div>
-        <div class="section-title">ALPHA <span class="teal">JOURNAL</span></div>
-        <p class="section-sub" style="margin-bottom:0">Your personal trade history synced from your connected MT5 account.</p>
+        <div class="eyebrow" id="ew-journal">PRIVATE</div>
+        <div class="section-title" id="st-journal">ALPHA <span class="teal">JOURNAL</span></div>
+        <p class="section-sub" id="ss-journal" style="margin-bottom:0">Your personal trade history synced from your connected MT5 account.</p>
       </div>
 
       <!-- Journal KPIs -->
@@ -2406,9 +2406,9 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <section class="section">
     <div class="container">
       <div class="section-header reveal">
-        <div class="eyebrow">COMPATIBILITY</div>
-        <div class="section-title">SUPPORTED <span class="teal">PLATFORMS</span></div>
-        <p class="section-sub">BYB Alpha bots run on every major trading platform used by retail and professional traders worldwide.</p>
+        <div class="eyebrow" id="ew-plat">COMPATIBILITY</div>
+        <div class="section-title" id="st-plat">SUPPORTED <span class="teal">PLATFORMS</span></div>
+        <p class="section-sub" id="ss-plat">BYB Alpha bots run on every major trading platform used by retail and professional traders worldwide.</p>
       </div>
       <div class="platforms-grid">
         <div class="platform-card card card-glow reveal"><div class="plat-logo">📊</div><div class="plat-name">MetaTrader 4</div><div class="plat-ver">MT4 · FULL SUPPORT</div><div class="plat-desc">The world's most popular retail platform. All BYB Alpha EAs are MT4-compatible out of the box. Works with 95%+ of brokers globally.</div><div class="plat-features"><div class="plat-feat">All bot tiers (Lite, Pro, Apex)</div><div class="plat-feat">One-click .ex4 installation</div><div class="plat-feat">Full strategy tester compatibility</div><div class="plat-feat">Works with VPS hosting</div><div class="plat-feat">Telegram alert integration</div></div></div>
@@ -2419,7 +2419,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         <div class="platform-card card card-glow reveal reveal-d5"><div class="plat-logo">☁️</div><div class="plat-name">Cloud VPS</div><div class="plat-ver">24/7 ALWAYS-ON</div><div class="plat-desc">Run all bots on a dedicated VPS for uninterrupted 24/5 operation. BYB Alpha bots are pre-optimised for low-latency VPS environments.</div><div class="plat-features"><div class="plat-feat">Compatible with Forex VPS, BeeksFX</div><div class="plat-feat">AWS &amp; Azure deployment guides</div><div class="plat-feat">Full setup documentation</div><div class="plat-feat">Remote monitoring dashboard</div></div></div>
       </div>
       <div class="section-header reveal" style="margin-top:64px">
-        <div class="eyebrow">COMPATIBILITY MATRIX</div>
+        <div class="eyebrow" id="ew-matrix">COMPATIBILITY MATRIX</div>
         <div class="section-title" style="font-size:clamp(24px,3vw,36px)">FEATURE <span class="teal">COVERAGE</span></div>
       </div>
       <div class="compat-table-wrap reveal">
@@ -2446,9 +2446,9 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <section class="section">
     <div class="container">
       <div class="section-header reveal">
-        <div class="eyebrow">GLOBAL AVAILABILITY</div>
-        <div class="section-title">SUPPORTED <span class="teal">COUNTRIES</span></div>
-        <p class="section-sub">BYB Alpha is available in 100+ countries. Some regions have restrictions due to local regulations.</p>
+        <div class="eyebrow" id="ew-countries">GLOBAL AVAILABILITY</div>
+        <div class="section-title" id="st-countries">SUPPORTED <span class="teal">COUNTRIES</span></div>
+        <p class="section-sub" id="ss-countries">BYB Alpha is available in 100+ countries. Some regions have restrictions due to local regulations.</p>
       </div>
       <div class="countries-stats-bar reveal">
         <div class="csb-item"><div class="csb-val" style="color:var(--bull)">37</div><div class="csb-lbl">FULLY AVAILABLE</div></div>
@@ -2461,7 +2461,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         <div class="sl-item"><div class="sl-dot" style="background:var(--bear)"></div>Not Available</div>
       </div>
       <div class="region-tabs reveal">
-        <button class="rtab active" onclick="filterRegion('all',this)">🌍 All Regions</button>
+        <button id="rtab-all" class="rtab active" onclick="filterRegion('all',this)">🌍 All Regions</button>
         <button class="rtab" onclick="filterRegion('europe',this)">🇪🇺 Europe</button>
         <button class="rtab" onclick="filterRegion('americas',this)">🌎 Americas</button>
         <button class="rtab" onclick="filterRegion('asia',this)">🌏 Asia-Pacific</button>
@@ -2489,8 +2489,8 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <div class="about-hero">
     <div class="container">
       <div class="about-hero-inner reveal">
-        <div class="eyebrow" style="justify-content:center">OUR STORY</div>
-        <div class="about-h1">BUILD<br><span class="teal">YOUR</span><br>BEST</div>
+        <div class="eyebrow" id="ew-story" style="justify-content:center">OUR STORY</div>
+        <div class="about-h1" id="about-h1">BUILD<br><span class="teal">YOUR</span><br>BEST</div>
         <p style="font-size:16px;color:var(--text2);max-width:540px;margin:20px auto 0;line-height:1.8">We are traders who got tired of losing money to emotion, fatigue, and inconsistency. So we built the bots we always wanted — and opened them to the world.</p>
       </div>
       <div class="mission-strip reveal" style="margin-top:56px">
@@ -2516,9 +2516,9 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <section class="section section-alt">
     <div class="container">
       <div class="section-header reveal">
-        <div class="eyebrow">THE TEAM</div>
-        <div class="section-title">MEET THE <span class="teal">FORGERS</span></div>
-        <p class="section-sub">A tight-knit team of traders, developers, and quants — united by one obsession.</p>
+        <div class="eyebrow" id="ew-team">THE TEAM</div>
+        <div class="section-title" id="st-team">MEET THE <span class="teal">FORGERS</span></div>
+        <p class="section-sub" id="ss-team">A tight-knit team of traders, developers, and quants — united by one obsession.</p>
       </div>
       <div class="team-grid">
         <div class="team-card card card-glow reveal"><div class="team-avatar">AK</div><div class="team-name">Alex Kane</div><div class="team-role">FOUNDER &amp; HEAD OF STRATEGY</div><div class="team-bio">Former institutional FX trader with 11 years at tier-1 banks. Built the Unwicked EA strategy from scratch over 4 years of live market testing.</div></div>
@@ -2534,7 +2534,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start">
         <div>
           <div class="section-header reveal">
-            <div class="eyebrow">OUR VALUES</div>
+            <div class="eyebrow" id="ew-values">OUR VALUES</div>
             <div class="section-title" style="font-size:clamp(28px,4vw,44px)">WHAT WE<br><span class="teal">STAND FOR</span></div>
           </div>
           <div class="values-grid">
@@ -2546,7 +2546,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         </div>
         <div>
           <div class="section-header reveal">
-            <div class="eyebrow">HISTORY</div>
+            <div class="eyebrow" id="ew-history">HISTORY</div>
             <div class="section-title" style="font-size:clamp(28px,4vw,44px)">OUR<br><span class="teal">JOURNEY</span></div>
           </div>
           <div class="timeline reveal">
@@ -2567,8 +2567,8 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <section class="section">
     <div class="container">
       <div class="section-header reveal">
-        <div class="eyebrow">HELP CENTRE</div>
-        <div class="section-title">FREQUENTLY ASKED<br><span class="teal">QUESTIONS</span></div>
+        <div class="eyebrow" id="ew-faq">HELP CENTRE</div>
+        <div class="section-title" id="st-faq">FREQUENTLY ASKED<br><span class="teal">QUESTIONS</span></div>
         <p class="section-sub">Can't find what you need? Jump into our <a href="https://discord.gg/J2tZEaQJM" target="_blank" style="color:var(--blue)">Discord</a> or chat with Forge AI below →</p>
       </div>
       <div style="max-width:900px;margin:0 auto">
@@ -2836,7 +2836,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
     <div class="container">
       <div class="contact-layout">
         <div class="contact-info reveal">
-          <div class="eyebrow">GET IN TOUCH</div>
+          <div class="eyebrow" id="ew-contact">GET IN TOUCH</div>
           <div class="contact-h2">LET'S<br><span class="teal">TALK</span><br>TRADING.</div>
           <p class="contact-p">Have a question, want to commission a custom bot, or just want to know if BYB Alpha is right for you? We respond within 24 hours.</p>
           <div class="contact-detail"><div class="cd-icon">✉️</div><div class="cd-text">support@bybalpha.com</div></div>
@@ -2987,9 +2987,9 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <section class="section">
     <div class="container">
       <div class="section-header reveal">
-        <div class="eyebrow">TRADING CALENDAR</div>
-        <div class="section-title">ECONOMIC <span class="teal">CALENDAR</span></div>
-        <p class="section-sub">Monitor high-impact economic events that affect FX markets. Plan your trades around major releases.</p>
+        <div class="eyebrow" id="ew-cal">TRADING CALENDAR</div>
+        <div class="section-title" id="st-cal">ECONOMIC <span class="teal">CALENDAR</span></div>
+        <p class="section-sub" id="ss-cal">Monitor high-impact economic events that affect FX markets. Plan your trades around major releases.</p>
       </div>
 
       <!-- Calendar Info Cards -->
@@ -3117,7 +3117,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
             <p style="margin-bottom:32px">Access the complete AlphaCalendar with real-time updates, session status, and upcoming events.</p>
             <div class="cta-btns">
               <a href="./calender.html" class="btn btn-primary btn-lg">📅 Open AlphaCalendar →</a>
-              <button class="btn btn-ghost btn-lg" onclick="showPage('contact')">Get Trading Alerts</button>
+              <button id="cal-btn2" class="btn btn-ghost btn-lg" onclick="showPage('contact')">Get Trading Alerts</button>
             </div>
           </div>
         </div>
@@ -3209,7 +3209,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         </div>
 
         <div>
-          <div class="footer-col-title">PLATFORM</div>
+          <div class="footer-col-title" id="fc-platform">PLATFORM</div>
           <div class="footer-links-list">
             <button onclick="showPage('home')">Home</button>
             <button onclick="showPage('dashboard')">Live Dashboard</button>
@@ -3219,7 +3219,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         </div>
 
         <div>
-          <div class="footer-col-title">COMPANY</div>
+          <div class="footer-col-title" id="fc-company">COMPANY</div>
           <div class="footer-links-list">
             <button onclick="showPage('about')">About Us</button>
             <button onclick="showPage('faq')">FAQ</button>
@@ -3229,7 +3229,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         </div>
 
         <div>
-          <div class="footer-col-title">PRODUCTS</div>
+          <div class="footer-col-title" id="fc-products">PRODUCTS</div>
           <div class="footer-links-list">
             <button onclick="showPage('contact')">Unwicked Lite — £79</button>
             <button onclick="showPage('contact')">Unwicked EA Pro — £149</button>
@@ -3239,7 +3239,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         </div>
 
         <div>
-          <div class="footer-col-title">RESOURCES</div>
+          <div class="footer-col-title" id="fc-resources">RESOURCES</div>
           <div class="footer-links-list">
             <a href="https://discord.gg/J2tZEaQJM" target="_blank">Discord Community</a>
             <button onclick="toggleChatPopup()">Forge AI Chat</button>
@@ -4651,22 +4651,22 @@ window.addEventListener('resize', () => {
     <div class="auth-modal-logo"><span>Connect MT5 Account</span></div>
     <div class="auth-form" id="formMT5">
       <div>
-        <label class="auth-label">Account Label</label>
+        <label class="auth-label" id="lbl-mt5-label">Account Label</label>
         <input class="auth-input" type="text" id="mt5Label" placeholder="e.g. My IC Markets Account"/>
       </div>
       <div>
-        <label class="auth-label">MT5 Login (Account Number)</label>
+        <label class="auth-label" id="lbl-mt5-login">MT5 Login (Account Number)</label>
         <input class="auth-input" type="number" id="mt5Login" placeholder="12345678"/>
       </div>
       <div>
-        <label class="auth-label">MT5 Password</label>
+        <label class="auth-label" id="lbl-mt5-pw">MT5 Password</label>
         <div class="pw-wrap">
           <input class="auth-input" type="password" id="mt5Password" placeholder="Your MT5 investor/master password"/>
           <button type="button" class="pw-eye" onclick="togglePwVis('mt5Password',this)" title="Show/hide password">👁</button>
         </div>
       </div>
       <div>
-        <label class="auth-label">MT5 Server</label>
+        <label class="auth-label" id="lbl-mt5-server">MT5 Server</label>
         <input class="auth-input" type="text" id="mt5Server" placeholder="e.g. ICMarkets-Live01"/>
       </div>
       <div style="background:rgba(38,166,154,.08);border:1px solid rgba(38,166,154,.2);border-radius:8px;padding:12px;font-size:12px;color:#8b949e;line-height:1.6;">
@@ -4821,212 +4821,265 @@ window.addEventListener('resize', () => {
 const TRANSLATIONS = {
   en: {
     // Navigation
-    'nav-home': 'Home',
-    'nav-dashboard': 'Dashboard',
-    'nav-platforms': 'Platforms',
-    'nav-countries': 'Countries',
-    'nav-about': 'About',
-    'nav-faq': 'FAQ',
-    'nav-ai-support': 'AI Support',
-    'nav-calendar': 'Calendar',
-    'nav-contact': 'Contact',
-    'nav-login': 'Login',
-    'nav-get-started': 'Get Started',
-    'nav-logout': 'Logout',
-
-    // Hero section
-    'hero-live-text': 'ACTIVE TRADERS',
-    'hero-live': 'LIVE · X ACTIVE TRADERS',
-    'hero-h1': 'TRADE<br><span class="line-teal">SMARTER.</span><span class="line-thin">NOT HARDER.</span>',
-    'hero-sub': 'BYB Alpha builds battle-tested algorithmic trading systems for serious traders. Deploy institutional-grade Expert Advisors in minutes — or commission a fully custom bot built to your exact strategy.',
-    'hs-lbl-1': 'WIN RATE',
-    'hs-lbl-2': 'PROFIT GENERATED',
-    'hs-lbl-3': 'LIVE VERIFIED',
-    'hs-lbl-4': 'TRADER RATING',
-    'hero-btn-1': '📊 Live Dashboard',
-    'hero-btn-2': 'Commission a Custom Bot',
-
-    // Dashboard gate
-    'dashgate-title': 'Join BYB Alpha',
-    'dashgate-subtitle': 'Login or create a free account to access your personal trading dashboard.',
-    'dashgate-btn-1': 'Login',
-    'dashgate-btn-2': 'Register Free',
-    'dashgate-mt5-title':    'Connect your MT5 Account',
-    'dashgate-mt5-subtitle': 'Add your MetaTrader 5 account to sync your trades, view your journal and track your performance in real time.',
-    'dashgate-mt5-btn':      '➕ Add MT5 Account',
-
-    // Auth modal
-    'auth-tab-login': 'Login',
-    'auth-tab-register': 'Register',
-    'auth-submit-login': 'Login',
-    'auth-submit-register': 'Create Account',
-
-    // Settings
-    'settings-mt5-accounts': 'MT5 Accounts',
-    'settings-newsletter': 'Newsletter',
-    'settings-logout': 'Logout',
-
+    'nav-home':'Home','nav-dashboard':'Dashboard','nav-platforms':'Platforms',
+    'nav-countries':'Countries','nav-about':'About','nav-faq':'FAQ',
+    'nav-ai-support':'AI Support','nav-calendar':'Calendar','nav-contact':'Contact',
+    'nav-login':'Login','nav-get-started':'Get Started','nav-logout':'Logout',
+    // Hero
+    'hero-live-text':'ACTIVE TRADERS',
+    'hero-h1':'TRADE<br><span class="line-teal">SMARTER.</span><span class="line-thin">NOT HARDER.</span>',
+    'hero-sub':'BYB Alpha builds battle-tested algorithmic trading systems for serious traders. Deploy institutional-grade Expert Advisors in minutes — or commission a fully custom bot built to your exact strategy.',
+    'hs-lbl-1':'WIN RATE','hs-lbl-2':'PROFIT GENERATED','hs-lbl-3':'LIVE VERIFIED','hs-lbl-4':'TRADER RATING',
+    'hero-btn-1':'📊 View Live Dashboard','hero-btn-2':'Commission a Custom Bot',
+    // Home sections
+    'ew-cap':'CAPABILITIES','st-cap':'BUILT ON <span class="teal">INSTITUTIONAL</span> LOGIC',
+    'ss-cap':'Every component of the Unwicked EA engine is engineered to the standard of professional trading desks — not retail hobby projects.',
+    'ew-pricing':'PRICING','st-pricing':'ONE-TIME PAYMENT.<br><span class="teal">LIFETIME ACCESS.</span>',
+    'ss-pricing':'No subscriptions. No profit share. No hidden fees. Buy once and own your edge forever.',
+    'ew-specs':'DETAILED SPECS','ew-diff':'THE DIFFERENCE',
+    'st-diff':'WHY <span class="teal">BYB ALPHA</span> WINS',
+    'ew-pillars':'KEY STRENGTHS','st-pillars':'FOUR PILLARS OF <span class="teal">EDGE</span>',
+    'ew-social':'SOCIAL PROOF','st-social':'TRADERS <span class="teal">TRUST</span> BYB ALPHA',
+    'ew-cta':'START TODAY','cta-btn1':'🚀 Get Your Bot Now','cta-btn2':'💬 Chat with Forge AI',
+    // Dashboard
+    'ew-dash':'LIVE ANALYTICS','st-dash':'BOT <span class="teal">PERFORMANCE</span>',
+    'ss-dash':'Real-time metrics refreshing every 30s.',
+    'ew-journal':'PRIVATE','st-journal':'ALPHA <span class="teal">JOURNAL</span>',
+    'ss-journal':'Your personal trade history synced from your connected MT5 account.',
+    'dashgate-title':'Login to Access Dashboard',
+    'dashgate-subtitle':'Create a free account to view your live trading data, AlphaJournal and performance analytics.',
+    'dashgate-btn-1':'Login','dashgate-btn-2':'Register Free',
+    'dashgate-mt5-title':'Connect your MT5 Account',
+    'dashgate-mt5-subtitle':'Add your MetaTrader 5 account to sync your trades, view your journal and track your performance in real time.',
+    'dashgate-mt5-btn':'➕ Add MT5 Account',
+    // Platforms
+    'ew-plat':'COMPATIBILITY','st-plat':'SUPPORTED <span class="teal">PLATFORMS</span>',
+    'ss-plat':'BYB Alpha bots run on every major trading platform used by retail and professional traders worldwide.',
+    'ew-matrix':'COMPATIBILITY MATRIX',
+    // Countries
+    'ew-countries':'GLOBAL AVAILABILITY','st-countries':'SUPPORTED <span class="teal">COUNTRIES</span>',
+    'ss-countries':'BYB Alpha is available in 100+ countries. Some regions have restrictions due to local regulations.',
+    'rtab-all':'🌍 All Regions',
+    // About
+    'ew-story':'OUR STORY','about-h1':'BUILD<br><span class="teal">YOUR</span><br>BEST',
+    'ew-team':'THE TEAM','st-team':'MEET THE <span class="teal">FORGERS</span>',
+    'ss-team':'A tight-knit team of traders, developers, and quants — united by one obsession.',
+    'ew-values':'OUR VALUES','ew-history':'HISTORY',
+    // FAQ
+    'ew-faq':'HELP CENTRE','st-faq':'FREQUENTLY ASKED<br><span class="teal">QUESTIONS</span>',
+    // Calendar
+    'ew-cal':'TRADING CALENDAR','st-cal':'ECONOMIC <span class="teal">CALENDAR</span>',
+    'ss-cal':'Monitor high-impact economic events that affect FX markets. Plan your trades around major releases.',
+    'cal-btn2':'Get Trading Alerts',
+    // Contact
+    'ew-contact':'GET IN TOUCH',
     // Footer
-    'footer-stay-loop': 'STAY IN THE LOOP',
-    'footer-stay-sub': 'Strategy updates, market insights, and new bot launches — straight to your inbox.'
+    'fc-platform':'PLATFORM','fc-company':'COMPANY','fc-products':'PRODUCTS','fc-resources':'RESOURCES',
+    'footer-stay-loop':'STAY IN THE LOOP',
+    'footer-stay-sub':'Strategy updates, market insights, and new bot launches — straight to your inbox.',
+    // Auth
+    'auth-tab-login':'Login','auth-tab-register':'Register',
+    'auth-submit-login':'Login','auth-submit-register':'Create Account',
+    'lbl-email':'Email','lbl-password':'Password','lbl-username':'Username',
+    'lbl-mt5-label':'Account Label','lbl-mt5-login':'MT5 Login (Account Number)','lbl-mt5-server':'MT5 Server',
   },
 
   de: {
     // Navigation
-    'nav-home': 'Startseite',
-    'nav-dashboard': 'Dashboard',
-    'nav-platforms': 'Plattformen',
-    'nav-countries': 'Länder',
-    'nav-about': 'Über uns',
-    'nav-faq': 'FAQ',
-    'nav-ai-support': 'AI Support',
-    'nav-calendar': 'Kalender',
-    'nav-contact': 'Kontakt',
-    'nav-login': 'Login',
-    'nav-get-started': 'Loslegen',
-    'nav-logout': 'Abmelden',
-
-    // Hero section
-    'hero-live-text': 'AKTIVE TRADER',
-    'hero-live': 'LIVE · X AKTIVE TRADER',
-    'hero-h1': 'HANDEL<br><span class="line-teal">SMARTER.</span><span class="line-thin">NICHT HÄRTER.</span>',
-    'hero-sub': 'BYB Alpha entwickelt kampferprobte algorithmische Handelssysteme für ernsthafte Trader. Setze institutionelle Expert Advisors in Minuten ein — oder bestelle einen vollständig maßgeschneiderten Bot.',
-    'hs-lbl-1': 'GEWINNRATE',
-    'hs-lbl-2': 'GENERIERTER PROFIT',
-    'hs-lbl-3': 'LIVE VERIFIZIERT',
-    'hs-lbl-4': 'TRADER BEWERTUNG',
-    'hero-btn-1': '📊 Live Dashboard',
-    'hero-btn-2': 'Benutzerdefinierten Bot beauftragen',
-
-    // Dashboard gate
-    'dashgate-title': 'BYB Alpha beitreten',
-    'dashgate-subtitle': 'Melde dich an oder erstelle ein kostenloses Konto, um auf dein persönliches Trading-Dashboard zuzugreifen.',
-    'dashgate-btn-1': 'Login',
-    'dashgate-btn-2': 'Kostenlos registrieren',
-    'dashgate-mt5-title':    'MT5-Konto verbinden',
-    'dashgate-mt5-subtitle': 'Füge deinen MetaTrader 5 Account hinzu, um Trades zu synchronisieren, dein Journal zu sehen und deine Performance in Echtzeit zu verfolgen.',
-    'dashgate-mt5-btn':      '➕ MT5-Konto hinzufügen',
-
-    // Auth modal
-    'auth-tab-login': 'Login',
-    'auth-tab-register': 'Registrieren',
-    'auth-submit-login': 'Login',
-    'auth-submit-register': 'Konto erstellen',
-
-    // Settings
-    'settings-mt5-accounts': 'MT5 Konten',
-    'settings-newsletter': 'Newsletter',
-    'settings-logout': 'Abmelden',
-
+    'nav-home':'Startseite','nav-dashboard':'Dashboard','nav-platforms':'Plattformen',
+    'nav-countries':'Länder','nav-about':'Über uns','nav-faq':'FAQ',
+    'nav-ai-support':'AI Support','nav-calendar':'Kalender','nav-contact':'Kontakt',
+    'nav-login':'Login','nav-get-started':'Loslegen','nav-logout':'Abmelden',
+    // Hero
+    'hero-live-text':'AKTIVE TRADER',
+    'hero-h1':'HANDEL<br><span class="line-teal">SMARTER.</span><span class="line-thin">NICHT HÄRTER.</span>',
+    'hero-sub':'BYB Alpha entwickelt kampferprobte algorithmische Handelssysteme für ernsthafte Trader. Setze institutionelle Expert Advisors in Minuten ein — oder bestelle einen vollständig maßgeschneiderten Bot.',
+    'hs-lbl-1':'GEWINNRATE','hs-lbl-2':'GENERIERTER PROFIT','hs-lbl-3':'LIVE VERIFIZIERT','hs-lbl-4':'BEWERTUNG',
+    'hero-btn-1':'📊 Live Dashboard','hero-btn-2':'Benutzerdefinierten Bot beauftragen',
+    // Home sections
+    'ew-cap':'FUNKTIONEN','st-cap':'GEBAUT AUF <span class="teal">INSTITUTIONELLER</span> LOGIK',
+    'ss-cap':'Jede Komponente der Unwicked EA Engine ist nach dem Standard professioneller Trading-Desks entwickelt — kein Hobby-Produkt.',
+    'ew-pricing':'PREISE','st-pricing':'EINMALIGE ZAHLUNG.<br><span class="teal">LEBENSLANGER ZUGANG.</span>',
+    'ss-pricing':'Kein Abo. Keine Gewinnbeteiligung. Keine versteckten Gebühren. Einmal kaufen und den Vorteil für immer besitzen.',
+    'ew-specs':'DETAILLIERTE SPEZIFIKATIONEN','ew-diff':'DER UNTERSCHIED',
+    'st-diff':'WARUM <span class="teal">BYB ALPHA</span> GEWINNT',
+    'ew-pillars':'STÄRKEN','st-pillars':'VIER SÄULEN DES <span class="teal">VORTEILS</span>',
+    'ew-social':'KUNDENMEINUNGEN','st-social':'TRADER VERTRAUEN <span class="teal">BYB ALPHA</span>',
+    'ew-cta':'JETZT STARTEN','cta-btn1':'🚀 Bot jetzt holen','cta-btn2':'💬 Mit Forge AI chatten',
+    // Dashboard
+    'ew-dash':'LIVE ANALYTICS','st-dash':'BOT <span class="teal">PERFORMANCE</span>',
+    'ss-dash':'Echtzeit-Metriken, aktualisiert alle 30 Sekunden.',
+    'ew-journal':'PRIVAT','st-journal':'ALPHA <span class="teal">JOURNAL</span>',
+    'ss-journal':'Deine persönliche Trade-Historie, synchronisiert von deinem MT5-Konto.',
+    'dashgate-title':'Beim Dashboard anmelden',
+    'dashgate-subtitle':'Erstelle ein kostenloses Konto, um deine Live-Trading-Daten, das AlphaJournal und Leistungsanalysen zu sehen.',
+    'dashgate-btn-1':'Login','dashgate-btn-2':'Kostenlos registrieren',
+    'dashgate-mt5-title':'MT5-Konto verbinden',
+    'dashgate-mt5-subtitle':'Füge deinen MetaTrader 5 Account hinzu, um Trades zu synchronisieren, dein Journal zu sehen und deine Performance in Echtzeit zu verfolgen.',
+    'dashgate-mt5-btn':'➕ MT5-Konto hinzufügen',
+    // Platforms
+    'ew-plat':'KOMPATIBILITÄT','st-plat':'UNTERSTÜTZTE <span class="teal">PLATTFORMEN</span>',
+    'ss-plat':'BYB Alpha Bots laufen auf jeder wichtigen Trading-Plattform für Retail- und professionelle Trader weltweit.',
+    'ew-matrix':'KOMPATIBILITÄTSMATRIX',
+    // Countries
+    'ew-countries':'GLOBALE VERFÜGBARKEIT','st-countries':'UNTERSTÜTZTE <span class="teal">LÄNDER</span>',
+    'ss-countries':'BYB Alpha ist in 100+ Ländern verfügbar. Einige Regionen haben Einschränkungen aufgrund lokaler Vorschriften.',
+    'rtab-all':'🌍 Alle Regionen',
+    // About
+    'ew-story':'UNSERE GESCHICHTE','about-h1':'BAUT<br><span class="teal">EUER</span><br>BESTES',
+    'ew-team':'DAS TEAM','st-team':'TRIFF DIE <span class="teal">FORGER</span>',
+    'ss-team':'Ein eingespieltes Team aus Tradern, Entwicklern und Quants — vereint durch eine Leidenschaft.',
+    'ew-values':'UNSERE WERTE','ew-history':'GESCHICHTE',
+    // FAQ
+    'ew-faq':'HILFEZENTRUM','st-faq':'HÄUFIG GESTELLTE<br><span class="teal">FRAGEN</span>',
+    // Calendar
+    'ew-cal':'HANDELSKALENDER','st-cal':'WIRTSCHAFTS<span class="teal">KALENDER</span>',
+    'ss-cal':'Verfolge wichtige Wirtschaftsereignisse, die FX-Märkte beeinflussen. Plane deine Trades rund um wichtige Meldungen.',
+    'cal-btn2':'Trading-Benachrichtigungen erhalten',
+    // Contact
+    'ew-contact':'KONTAKT AUFNEHMEN',
     // Footer
-    'footer-stay-loop': 'BLEIB INFORMIERT',
-    'footer-stay-sub': 'Strategie-Updates, Markteinblicke und neue Bot-Starts — direkt in deinen Posteingang.'
+    'fc-platform':'PLATTFORM','fc-company':'UNTERNEHMEN','fc-products':'PRODUKTE','fc-resources':'RESSOURCEN',
+    'footer-stay-loop':'BLEIB INFORMIERT',
+    'footer-stay-sub':'Strategie-Updates, Markteinblicke und neue Bot-Starts — direkt in deinen Posteingang.',
+    // Auth
+    'auth-tab-login':'Login','auth-tab-register':'Registrieren',
+    'auth-submit-login':'Login','auth-submit-register':'Konto erstellen',
+    'lbl-email':'E-Mail','lbl-password':'Passwort','lbl-username':'Benutzername',
+    'lbl-mt5-label':'Kontobezeichnung','lbl-mt5-login':'MT5-Login (Kontonummer)','lbl-mt5-server':'MT5-Server',
   },
 
   es: {
     // Navigation
-    'nav-home': 'Inicio',
-    'nav-dashboard': 'Dashboard',
-    'nav-platforms': 'Plataformas',
-    'nav-countries': 'Países',
-    'nav-about': 'Sobre',
-    'nav-faq': 'FAQ',
-    'nav-ai-support': 'AI Support',
-    'nav-calendar': 'Calendario',
-    'nav-contact': 'Contacto',
-    'nav-login': 'Login',
-    'nav-get-started': 'Comenzar',
-    'nav-logout': 'Cerrar sesión',
-
-    // Hero section
-    'hero-live-text': 'TRADERS ACTIVOS',
-    'hero-live': 'LIVE · X TRADERS ACTIVOS',
-    'hero-h1': 'OPERA<br><span class="line-teal">MÁS LISTO.</span><span class="line-thin">NO MÁS DURO.</span>',
-    'hero-sub': 'BYB Alpha crea sistemas de trading algorítmico probados en batalla para traders serios. Despliega Expert Advisors de grado institucional en minutos — o encarga un bot completamente personalizado.',
-    'hs-lbl-1': 'TASA DE GANANCIA',
-    'hs-lbl-2': 'BENEFICIO GENERADO',
-    'hs-lbl-3': 'VERIFICADO EN VIVO',
-    'hs-lbl-4': 'VALORACIÓN',
-    'hero-btn-1': '📊 Dashboard en Vivo',
-    'hero-btn-2': 'Encarga un Bot Personalizado',
-
-    // Dashboard gate
-    'dashgate-title': 'Únete a BYB Alpha',
-    'dashgate-subtitle': 'Inicia sesión o crea una cuenta gratuita para acceder a tu dashboard de trading personal.',
-    'dashgate-btn-1': 'Login',
-    'dashgate-btn-2': 'Registrarse gratis',
-    'dashgate-mt5-title':    'Conecta tu cuenta MT5',
-    'dashgate-mt5-subtitle': 'Añade tu cuenta de MetaTrader 5 para sincronizar tus trades, ver tu journal y seguir tu rendimiento en tiempo real.',
-    'dashgate-mt5-btn':      '➕ Añadir cuenta MT5',
-
-    // Auth modal
-    'auth-tab-login': 'Login',
-    'auth-tab-register': 'Registrarse',
-    'auth-submit-login': 'Login',
-    'auth-submit-register': 'Crear cuenta',
-
-    // Settings
-    'settings-mt5-accounts': 'Cuentas MT5',
-    'settings-newsletter': 'Newsletter',
-    'settings-logout': 'Cerrar sesión',
-
+    'nav-home':'Inicio','nav-dashboard':'Dashboard','nav-platforms':'Plataformas',
+    'nav-countries':'Países','nav-about':'Sobre nosotros','nav-faq':'FAQ',
+    'nav-ai-support':'AI Support','nav-calendar':'Calendario','nav-contact':'Contacto',
+    'nav-login':'Login','nav-get-started':'Comenzar','nav-logout':'Cerrar sesión',
+    // Hero
+    'hero-live-text':'TRADERS ACTIVOS',
+    'hero-h1':'OPERA<br><span class="line-teal">MÁS LISTO.</span><span class="line-thin">NO MÁS DURO.</span>',
+    'hero-sub':'BYB Alpha crea sistemas de trading algorítmico probados en batalla para traders serios. Despliega Expert Advisors de grado institucional en minutos — o encarga un bot completamente personalizado.',
+    'hs-lbl-1':'TASA DE GANANCIA','hs-lbl-2':'BENEFICIO GENERADO','hs-lbl-3':'VERIFICADO EN VIVO','hs-lbl-4':'VALORACIÓN',
+    'hero-btn-1':'📊 Dashboard en Vivo','hero-btn-2':'Encargar un Bot Personalizado',
+    // Home sections
+    'ew-cap':'FUNCIONALIDADES','st-cap':'BASADO EN LÓGICA <span class="teal">INSTITUCIONAL</span>',
+    'ss-cap':'Cada componente del motor Unwicked EA está diseñado al nivel de los escritorios de trading profesionales — no proyectos de aficionados.',
+    'ew-pricing':'PRECIOS','st-pricing':'PAGO ÚNICO.<br><span class="teal">ACCESO DE POR VIDA.</span>',
+    'ss-pricing':'Sin suscripciones. Sin participación en beneficios. Sin tarifas ocultas. Compra una vez y conserva tu ventaja para siempre.',
+    'ew-specs':'ESPECIFICACIONES DETALLADAS','ew-diff':'LA DIFERENCIA',
+    'st-diff':'POR QUÉ <span class="teal">BYB ALPHA</span> GANA',
+    'ew-pillars':'FORTALEZAS','st-pillars':'CUATRO PILARES DEL <span class="teal">ÉXITO</span>',
+    'ew-social':'OPINIONES','st-social':'LOS TRADERS CONFÍAN EN <span class="teal">BYB ALPHA</span>',
+    'ew-cta':'EMPIEZA HOY','cta-btn1':'🚀 Obtén tu Bot Ahora','cta-btn2':'💬 Chatear con Forge AI',
+    // Dashboard
+    'ew-dash':'ANÁLISIS EN VIVO','st-dash':'RENDIMIENTO DEL <span class="teal">BOT</span>',
+    'ss-dash':'Métricas en tiempo real actualizadas cada 30 segundos.',
+    'ew-journal':'PRIVADO','st-journal':'ALPHA <span class="teal">JOURNAL</span>',
+    'ss-journal':'Tu historial personal de trades sincronizado desde tu cuenta MT5 conectada.',
+    'dashgate-title':'Acceder al Dashboard',
+    'dashgate-subtitle':'Crea una cuenta gratuita para ver tus datos de trading en vivo, AlphaJournal y análisis de rendimiento.',
+    'dashgate-btn-1':'Login','dashgate-btn-2':'Registrarse gratis',
+    'dashgate-mt5-title':'Conecta tu cuenta MT5',
+    'dashgate-mt5-subtitle':'Añade tu cuenta de MetaTrader 5 para sincronizar tus trades, ver tu journal y seguir tu rendimiento en tiempo real.',
+    'dashgate-mt5-btn':'➕ Añadir cuenta MT5',
+    // Platforms
+    'ew-plat':'COMPATIBILIDAD','st-plat':'PLATAFORMAS <span class="teal">SOPORTADAS</span>',
+    'ss-plat':'Los bots de BYB Alpha funcionan en todas las principales plataformas de trading utilizadas por traders de todo el mundo.',
+    'ew-matrix':'MATRIZ DE COMPATIBILIDAD',
+    // Countries
+    'ew-countries':'DISPONIBILIDAD GLOBAL','st-countries':'PAÍSES <span class="teal">SOPORTADOS</span>',
+    'ss-countries':'BYB Alpha está disponible en más de 100 países. Algunas regiones tienen restricciones por regulaciones locales.',
+    'rtab-all':'🌍 Todas las Regiones',
+    // About
+    'ew-story':'NUESTRA HISTORIA','about-h1':'CONSTRUYE<br><span class="teal">LO</span><br>MEJOR',
+    'ew-team':'EL EQUIPO','st-team':'CONOCE A LOS <span class="teal">FORGERS</span>',
+    'ss-team':'Un equipo compacto de traders, desarrolladores y quants — unidos por una obsesión.',
+    'ew-values':'NUESTROS VALORES','ew-history':'HISTORIA',
+    // FAQ
+    'ew-faq':'CENTRO DE AYUDA','st-faq':'PREGUNTAS<br><span class="teal">FRECUENTES</span>',
+    // Calendar
+    'ew-cal':'CALENDARIO DE TRADING','st-cal':'CALENDARIO <span class="teal">ECONÓMICO</span>',
+    'ss-cal':'Sigue los eventos económicos de alto impacto que afectan a los mercados FX. Planifica tus trades alrededor de los principales comunicados.',
+    'cal-btn2':'Recibir alertas de trading',
+    // Contact
+    'ew-contact':'CONTACTAR',
     // Footer
-    'footer-stay-loop': 'MANTENTE ACTUALIZADO',
-    'footer-stay-sub': 'Actualizaciones de estrategia, perspectivas de mercado y nuevos lanzamientos de bots — directamente a tu bandeja de entrada.'
+    'fc-platform':'PLATAFORMA','fc-company':'EMPRESA','fc-products':'PRODUCTOS','fc-resources':'RECURSOS',
+    'footer-stay-loop':'MANTENTE ACTUALIZADO',
+    'footer-stay-sub':'Actualizaciones de estrategia, perspectivas de mercado y nuevos lanzamientos — directamente a tu bandeja de entrada.',
+    // Auth
+    'auth-tab-login':'Login','auth-tab-register':'Registrarse',
+    'auth-submit-login':'Login','auth-submit-register':'Crear cuenta',
+    'lbl-email':'Correo electrónico','lbl-password':'Contraseña','lbl-username':'Nombre de usuario',
+    'lbl-mt5-label':'Etiqueta de cuenta','lbl-mt5-login':'Login MT5 (Número de cuenta)','lbl-mt5-server':'Servidor MT5',
   },
 
   fr: {
     // Navigation
-    'nav-home': 'Accueil',
-    'nav-dashboard': 'Dashboard',
-    'nav-platforms': 'Plateformes',
-    'nav-countries': 'Pays',
-    'nav-about': 'À propos',
-    'nav-faq': 'FAQ',
-    'nav-ai-support': 'AI Support',
-    'nav-calendar': 'Calendrier',
-    'nav-contact': 'Contact',
-    'nav-login': 'Login',
-    'nav-get-started': 'Démarrer',
-    'nav-logout': 'Déconnexion',
-
-    // Hero section
-    'hero-live-text': 'TRADERS ACTIFS',
-    'hero-live': 'LIVE · X TRADERS ACTIFS',
-    'hero-h1': 'TRADEZ<br><span class="line-teal">PLUS MALIN.</span><span class="line-thin">PAS PLUS DUR.</span>',
-    'hero-sub': 'BYB Alpha développe des systèmes de trading algorithmique éprouvés pour les traders sérieux. Déployez des Expert Advisors institutionnels en minutes — ou commandez un bot entièrement personnalisé.',
-    'hs-lbl-1': 'TAUX DE RÉUSSITE',
-    'hs-lbl-2': 'BÉNÉFICE GÉNÉRÉ',
-    'hs-lbl-3': 'VÉRIFIÉ EN DIRECT',
-    'hs-lbl-4': 'NOTE TRADER',
-    'hero-btn-1': '📊 Dashboard en Direct',
-    'hero-btn-2': 'Commander un Bot Personnalisé',
-
-    // Dashboard gate
-    'dashgate-title': 'Rejoindre BYB Alpha',
-    'dashgate-subtitle': 'Connectez-vous ou créez un compte gratuit pour accéder à votre tableau de bord de trading.',
-    'dashgate-btn-1': 'Login',
-    'dashgate-btn-2': "S'inscrire gratuitement",
-    'dashgate-mt5-title':    'Connectez votre compte MT5',
-    'dashgate-mt5-subtitle': 'Ajoutez votre compte MetaTrader 5 pour synchroniser vos trades, voir votre journal et suivre vos performances en temps réel.',
-    'dashgate-mt5-btn':      '➕ Ajouter un compte MT5',
-
-    // Auth modal
-    'auth-tab-login': 'Login',
-    'auth-tab-register': 'S\'inscrire',
-    'auth-submit-login': 'Login',
-    'auth-submit-register': 'Créer un compte',
-
-    // Settings
-    'settings-mt5-accounts': 'Comptes MT5',
-    'settings-newsletter': 'Newsletter',
-    'settings-logout': 'Déconnexion',
-
+    'nav-home':'Accueil','nav-dashboard':'Dashboard','nav-platforms':'Plateformes',
+    'nav-countries':'Pays','nav-about':'À propos','nav-faq':'FAQ',
+    'nav-ai-support':'AI Support','nav-calendar':'Calendrier','nav-contact':'Contact',
+    'nav-login':'Login','nav-get-started':'Démarrer','nav-logout':'Déconnexion',
+    // Hero
+    'hero-live-text':'TRADERS ACTIFS',
+    'hero-h1':'TRADEZ<br><span class="line-teal">PLUS MALIN.</span><span class="line-thin">PAS PLUS DUR.</span>',
+    'hero-sub':'BYB Alpha développe des systèmes de trading algorithmique éprouvés pour les traders sérieux. Déployez des Expert Advisors institutionnels en minutes — ou commandez un bot entièrement personnalisé.',
+    'hs-lbl-1':'TAUX DE RÉUSSITE','hs-lbl-2':'BÉNÉFICE GÉNÉRÉ','hs-lbl-3':'VÉRIFIÉ EN DIRECT','hs-lbl-4':'NOTE TRADER',
+    'hero-btn-1':'📊 Dashboard en Direct','hero-btn-2':'Commander un Bot Personnalisé',
+    // Home sections
+    'ew-cap':'FONCTIONNALITÉS','st-cap':'BASÉ SUR UNE LOGIQUE <span class="teal">INSTITUTIONNELLE</span>',
+    'ss-cap':'Chaque composant du moteur Unwicked EA est conçu selon le standard des desks de trading professionnels — pas de projets amateurs.',
+    'ew-pricing':'TARIFS','st-pricing':'PAIEMENT UNIQUE.<br><span class="teal">ACCÈS À VIE.</span>',
+    'ss-pricing':'Pas d\'abonnement. Pas de partage des bénéfices. Pas de frais cachés. Achetez une fois et gardez votre avantage pour toujours.',
+    'ew-specs':'SPÉCIFICATIONS DÉTAILLÉES','ew-diff':'LA DIFFÉRENCE',
+    'st-diff':'POURQUOI <span class="teal">BYB ALPHA</span> GAGNE',
+    'ew-pillars':'POINTS FORTS','st-pillars':'QUATRE PILIERS DE <span class="teal">L\'AVANTAGE</span>',
+    'ew-social':'AVIS','st-social':'LES TRADERS FONT CONFIANCE À <span class="teal">BYB ALPHA</span>',
+    'ew-cta':'COMMENCEZ AUJOURD\'HUI','cta-btn1':'🚀 Obtenir votre Bot','cta-btn2':'💬 Chatter avec Forge AI',
+    // Dashboard
+    'ew-dash':'ANALYSES EN DIRECT','st-dash':'PERFORMANCE DU <span class="teal">BOT</span>',
+    'ss-dash':'Métriques en temps réel actualisées toutes les 30 secondes.',
+    'ew-journal':'PRIVÉ','st-journal':'ALPHA <span class="teal">JOURNAL</span>',
+    'ss-journal':'Votre historique de trades personnel synchronisé depuis votre compte MT5 connecté.',
+    'dashgate-title':'Accéder au Dashboard',
+    'dashgate-subtitle':'Créez un compte gratuit pour voir vos données de trading en direct, AlphaJournal et les analyses de performance.',
+    'dashgate-btn-1':'Login','dashgate-btn-2':"S'inscrire gratuitement",
+    'dashgate-mt5-title':'Connectez votre compte MT5',
+    'dashgate-mt5-subtitle':'Ajoutez votre compte MetaTrader 5 pour synchroniser vos trades, voir votre journal et suivre vos performances en temps réel.',
+    'dashgate-mt5-btn':'➕ Ajouter un compte MT5',
+    // Platforms
+    'ew-plat':'COMPATIBILITÉ','st-plat':'PLATEFORMES <span class="teal">SUPPORTÉES</span>',
+    'ss-plat':'Les bots BYB Alpha fonctionnent sur toutes les principales plateformes de trading utilisées par les traders du monde entier.',
+    'ew-matrix':'MATRICE DE COMPATIBILITÉ',
+    // Countries
+    'ew-countries':'DISPONIBILITÉ MONDIALE','st-countries':'PAYS <span class="teal">SUPPORTÉS</span>',
+    'ss-countries':'BYB Alpha est disponible dans plus de 100 pays. Certaines régions ont des restrictions dues aux réglementations locales.',
+    'rtab-all':'🌍 Toutes les Régions',
+    // About
+    'ew-story':'NOTRE HISTOIRE','about-h1':'CONSTRUISEZ<br><span class="teal">VOTRE</span><br>MEILLEUR',
+    'ew-team':'L\'ÉQUIPE','st-team':'RENCONTREZ LES <span class="teal">FORGERS</span>',
+    'ss-team':'Une équipe soudée de traders, développeurs et quants — unis par une obsession.',
+    'ew-values':'NOS VALEURS','ew-history':'HISTORIQUE',
+    // FAQ
+    'ew-faq':'CENTRE D\'AIDE','st-faq':'QUESTIONS<br><span class="teal">FRÉQUENTES</span>',
+    // Calendar
+    'ew-cal':'CALENDRIER DE TRADING','st-cal':'CALENDRIER <span class="teal">ÉCONOMIQUE</span>',
+    'ss-cal':'Suivez les événements économiques à fort impact qui affectent les marchés FX. Planifiez vos trades autour des annonces majeures.',
+    'cal-btn2':'Recevoir des alertes trading',
+    // Contact
+    'ew-contact':'NOUS CONTACTER',
     // Footer
-    'footer-stay-loop': 'RESTEZ INFORMÉ',
-    'footer-stay-sub': 'Mises à jour de stratégie, perspectives de marché et nouveaux lancements de bots — directement dans votre boîte de réception.'
+    'fc-platform':'PLATEFORME','fc-company':'ENTREPRISE','fc-products':'PRODUITS','fc-resources':'RESSOURCES',
+    'footer-stay-loop':'RESTEZ INFORMÉ',
+    'footer-stay-sub':'Mises à jour de stratégie, perspectives de marché et nouveaux lancements — directement dans votre boîte de réception.',
+    // Auth
+    'auth-tab-login':'Login','auth-tab-register':"S'inscrire",
+    'auth-submit-login':'Login','auth-submit-register':'Créer un compte',
+    'lbl-email':'E-mail','lbl-password':'Mot de passe','lbl-username':'Nom d\'utilisateur',
+    'lbl-mt5-label':'Libellé du compte','lbl-mt5-login':'Login MT5 (Numéro de compte)','lbl-mt5-server':'Serveur MT5',
   }
 };
+
 
 // Translation key to selector/id mapping
 const TRANSLATION_MAP = [
@@ -5040,7 +5093,6 @@ const TRANSLATION_MAP = [
   { id: null, selector: '#desktopNav .nav-btn:nth-child(7)', key: 'nav-ai-support' },
   { id: null, selector: '#desktopNav .nav-btn:nth-child(8)', key: 'nav-calendar' },
   { id: null, selector: '#desktopNav .nav-btn:nth-child(9)', key: 'nav-contact' },
-
   // ── Mobile Navigation ──
   { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(1)', key: 'nav-home' },
   { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(2)', key: 'nav-dashboard' },
@@ -5051,14 +5103,12 @@ const TRANSLATION_MAP = [
   { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(7)', key: 'nav-ai-support' },
   { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(8)', key: 'nav-calendar' },
   { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(9)', key: 'nav-contact' },
-
-  // ── Nav CTA buttons ──
-  { id: null, selector: '#navLoggedOut .btn-ghost',    key: 'nav-login' },
-  { id: null, selector: '#navLoggedOut .btn-primary',  key: 'nav-get-started' },
-  { id: null, selector: '#navLoggedIn .btn-ghost',     key: 'nav-logout' },
-
+  // ── Nav CTA ──
+  { id: null, selector: '#navLoggedOut .btn-ghost',   key: 'nav-login' },
+  { id: null, selector: '#navLoggedOut .btn-primary', key: 'nav-get-started' },
+  { id: null, selector: '#navLoggedIn .btn-ghost',    key: 'nav-logout' },
   // ── Hero ──
-  { id: 'heroLiveText',  key: 'hero-live-text' },   // only the text span, not the pulse/counter
+  { id: 'heroLiveText', key: 'hero-live-text' },
   { id: null, selector: '.hero-h1', key: 'hero-h1', isHTML: true },
   { id: null, selector: '.hero-sub', key: 'hero-sub' },
   { id: null, selector: '.hero-stats-row .hero-stat:nth-child(1) .hs-lbl', key: 'hs-lbl-1' },
@@ -5067,33 +5117,99 @@ const TRANSLATION_MAP = [
   { id: null, selector: '.hero-stats-row .hero-stat:nth-child(4) .hs-lbl', key: 'hs-lbl-4' },
   { id: null, selector: '.hero-btns .btn-primary', key: 'hero-btn-1' },
   { id: null, selector: '.hero-btns .btn-ghost',   key: 'hero-btn-2' },
-
-  // ── Dashboard Gate (not logged in) ──
-  { id: 'dashGateTitle',    key: 'dashgate-title' },
-  { id: 'dashGateSubtitle', key: 'dashgate-subtitle' },
-  { id: 'dashGateBtn1',     key: 'dashgate-btn-1' },
-  { id: 'dashGateBtn2',     key: 'dashgate-btn-2' },
-
-  // ── Dashboard Gate MT5 ──
+  // ── Home: Capabilities ──
+  { id: 'ew-cap',    key: 'ew-cap' },
+  { id: 'st-cap',    key: 'st-cap', isHTML: true },
+  { id: 'ss-cap',    key: 'ss-cap' },
+  // ── Home: Pricing ──
+  { id: 'ew-pricing', key: 'ew-pricing' },
+  { id: 'st-pricing', key: 'st-pricing', isHTML: true },
+  { id: 'ss-pricing', key: 'ss-pricing' },
+  // ── Home: Specs ──
+  { id: 'ew-specs', key: 'ew-specs' },
+  // ── Home: Why ──
+  { id: 'ew-diff', key: 'ew-diff' },
+  { id: 'st-diff', key: 'st-diff', isHTML: true },
+  // ── Home: Pillars ──
+  { id: 'ew-pillars', key: 'ew-pillars' },
+  { id: 'st-pillars', key: 'st-pillars', isHTML: true },
+  // ── Home: Social Proof ──
+  { id: 'ew-social', key: 'ew-social' },
+  { id: 'st-social', key: 'st-social', isHTML: true },
+  // ── Home: CTA ──
+  { id: 'ew-cta',   key: 'ew-cta' },
+  { id: 'cta-btn1', key: 'cta-btn1' },
+  { id: 'cta-btn2', key: 'cta-btn2' },
+  // ── Dashboard ──
+  { id: 'ew-dash',  key: 'ew-dash' },
+  { id: 'st-dash',  key: 'st-dash', isHTML: true },
+  { id: 'ss-dash',  key: 'ss-dash' },
+  { id: 'ew-journal', key: 'ew-journal' },
+  { id: 'st-journal', key: 'st-journal', isHTML: true },
+  { id: 'ss-journal', key: 'ss-journal' },
+  // ── Dashboard Gates ──
+  { id: 'dashGateTitle',       key: 'dashgate-title' },
+  { id: 'dashGateSubtitle',    key: 'dashgate-subtitle' },
+  { id: 'dashGateBtn1',        key: 'dashgate-btn-1' },
+  { id: 'dashGateBtn2',        key: 'dashgate-btn-2' },
   { id: 'dashGateMT5Title',    key: 'dashgate-mt5-title' },
   { id: 'dashGateMT5Subtitle', key: 'dashgate-mt5-subtitle' },
   { id: 'dashGateMT5Btn',      key: 'dashgate-mt5-btn' },
-
+  // ── Platforms ──
+  { id: 'ew-plat',   key: 'ew-plat' },
+  { id: 'st-plat',   key: 'st-plat', isHTML: true },
+  { id: 'ss-plat',   key: 'ss-plat' },
+  { id: 'ew-matrix', key: 'ew-matrix' },
+  // ── Countries ──
+  { id: 'ew-countries', key: 'ew-countries' },
+  { id: 'st-countries', key: 'st-countries', isHTML: true },
+  { id: 'ss-countries', key: 'ss-countries' },
+  { id: 'rtab-all',     key: 'rtab-all' },
+  // ── About ──
+  { id: 'ew-story',  key: 'ew-story' },
+  { id: 'about-h1',  key: 'about-h1', isHTML: true },
+  { id: 'ew-team',   key: 'ew-team' },
+  { id: 'st-team',   key: 'st-team', isHTML: true },
+  { id: 'ss-team',   key: 'ss-team' },
+  { id: 'ew-values', key: 'ew-values' },
+  { id: 'ew-history',key: 'ew-history' },
+  // ── FAQ ──
+  { id: 'ew-faq', key: 'ew-faq' },
+  { id: 'st-faq', key: 'st-faq', isHTML: true },
+  // ── Calendar ──
+  { id: 'ew-cal',  key: 'ew-cal' },
+  { id: 'st-cal',  key: 'st-cal', isHTML: true },
+  { id: 'ss-cal',  key: 'ss-cal' },
+  { id: 'cal-btn2',key: 'cal-btn2' },
+  // ── Contact ──
+  { id: 'ew-contact', key: 'ew-contact' },
+  // ── Footer ──
+  { id: 'fc-platform', key: 'fc-platform' },
+  { id: 'fc-company',  key: 'fc-company' },
+  { id: 'fc-products', key: 'fc-products' },
+  { id: 'fc-resources',key: 'fc-resources' },
+  { id: null, selector: '.fn-left h3', key: 'footer-stay-loop' },
+  { id: null, selector: '.fn-left p',  key: 'footer-stay-sub' },
   // ── Auth Modal ──
   { id: 'tabLogin',    key: 'auth-tab-login' },
   { id: 'tabRegister', key: 'auth-tab-register' },
   { id: 'loginBtn',    key: 'auth-submit-login' },
   { id: 'registerBtn', key: 'auth-submit-register' },
-
-  // ── Footer Newsletter ──
-  { id: null, selector: '.fn-left h3', key: 'footer-stay-loop' },
-  { id: null, selector: '.fn-left p',  key: 'footer-stay-sub' },
+  { id: 'lbl-login-email', key: 'lbl-email' },
+  { id: 'lbl-login-pw',    key: 'lbl-password' },
+  { id: 'lbl-reg-user',    key: 'lbl-username' },
+  { id: 'lbl-reg-email',   key: 'lbl-email' },
+  { id: 'lbl-reg-pw',      key: 'lbl-password' },
+  // ── MT5 Modal ──
+  { id: 'lbl-mt5-label',  key: 'lbl-mt5-label' },
+  { id: 'lbl-mt5-login',  key: 'lbl-mt5-login' },
+  { id: 'lbl-mt5-pw',     key: 'lbl-password' },
+  { id: 'lbl-mt5-server', key: 'lbl-mt5-server' },
 ];
 
 function setLanguage(lang) {
   if (!TRANSLATIONS[lang]) lang = 'en';
   localStorage.setItem('byb_lang', lang);
-
   TRANSLATION_MAP.forEach(function(item) {
     var el = item.id
       ? document.getElementById(item.id)
@@ -5103,22 +5219,15 @@ function setLanguage(lang) {
     if (!text) return;
     if (item.isHTML) { el.innerHTML = text; } else { el.textContent = text; }
   });
-
-  // Active button highlight
   document.querySelectorAll('#langBar button').forEach(function(btn) {
     btn.style.borderColor = '#30363d';
     btn.style.color = '#8b949e';
     btn.style.background = 'none';
   });
-  var activeBtn = document.getElementById('lang-' + lang);
-  if (activeBtn) {
-    activeBtn.style.borderColor = '#26a69a';
-    activeBtn.style.color = '#26a69a';
-    activeBtn.style.background = 'rgba(38,166,154,.08)';
-  }
+  var ab = document.getElementById('lang-' + lang);
+  if (ab) { ab.style.borderColor = '#26a69a'; ab.style.color = '#26a69a'; ab.style.background = 'rgba(38,166,154,.08)'; }
 }
 
-// Apply saved language on page load
 document.addEventListener('DOMContentLoaded', function() {
   setLanguage(localStorage.getItem('byb_lang') || 'en');
 });
