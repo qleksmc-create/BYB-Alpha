@@ -4096,10 +4096,23 @@ function copySyncToken() {
 
 // ── EA Download ──
 function downloadEA() {
-  // Link to the EA file on GitHub
   const url = 'https://raw.githubusercontent.com/qleksmc-create/BYB-Alpha/main/BYB_Sync.mq5';
-  const a = document.createElement('a');
-  a.href = url; a.download = 'BYB_Sync.mq5'; a.click();
+  fetch(url)
+    .then(function(r) { return r.blob(); })
+    .then(function(blob) {
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = 'BYB_Sync.mq5';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 1000);
+    })
+    .catch(function() {
+      // Fallback: open in new tab if fetch fails
+      window.open(url, '_blank');
+    });
 }
 
 // ── Password visibility toggle ──
