@@ -2432,9 +2432,9 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
 
       <!-- ── Account Overview ──────────────────────────────────────── -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;">
-        <div class="card" style="padding:16px 18px;border-color:rgba(38,166,154,.2);">
-          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">BALANCE</div>
-          <div id="jBalance" style="font-size:22px;font-weight:800;color:var(--teal);font-family:var(--font-mono);">—</div>
+        <div class="card" style="padding:16px 18px;border-color:rgba(239,83,80,.2);">
+          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">MAX DRAWDOWN</div>
+          <div id="jBalance" style="font-size:22px;font-weight:800;color:var(--bear);font-family:var(--font-mono);">—</div>
         </div>
         <div class="card" style="padding:16px 18px;border-color:rgba(38,166,154,.2);">
           <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">TOTAL P&amp;L</div>
@@ -2658,6 +2658,13 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
               <tr><td colspan="9" style="text-align:center;padding:20px;color:#484f58;font-size:13px;">Loading...</td></tr>
             </tbody>
           </table>
+        </div>
+        <!-- Pagination -->
+        <div id="jPagination" style="display:none;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid #21262d;flex-wrap:wrap;gap:10px;">
+          <div style="font-size:12px;color:#484f58;">
+            Trades <span id="jPageFrom">—</span>–<span id="jPageTo">—</span> of <span id="jPageTotal">—</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;" id="jPageButtons"></div>
         </div>
       </div>
 
@@ -4727,7 +4734,7 @@ async function loadAlphaJournal(userId, activeAccount) {
 
     const el = id => document.getElementById(id);
     if (el('jTotalPnl'))     { el('jTotalPnl').textContent = jFmt$(pnl); el('jTotalPnl').style.color = jPnlColor(pnl); }
-    if (el('jBalance'))      el('jBalance').textContent = '$' + Math.abs(pnl).toFixed(2);
+    // jBalance is now used for Max DD — filled later after equity curve calc
     if (el('jWinRate'))      { el('jWinRate').textContent = wr.toFixed(1) + '%'; el('jWinRate').style.color = wr >= 50 ? 'var(--bull)' : 'var(--bear)'; }
     if (el('jProfitFactor')) { el('jProfitFactor').textContent = pf > 0 ? pf.toFixed(2) : '—'; el('jProfitFactor').style.color = pf >= 1 ? 'var(--bull)' : 'var(--bear)'; }
     if (el('jExpectancy'))   { el('jExpectancy').textContent = jFmt$(summary.expectancy); el('jExpectancy').style.color = jPnlColor(summary.expectancy); }
@@ -4765,8 +4772,10 @@ async function loadAlphaJournal(userId, activeAccount) {
     eqData.forEach(v => { if (v > peak) peak = v; const dd = peak - v; if (dd > maxDD) maxDD = dd; });
     const maxDDPct = peak > 0 ? Math.min((maxDD / peak) * 100, 100) : 0;
     const el = id => document.getElementById(id);
+    // Fill the top-left "MAX DRAWDOWN" card
+    if (el('jBalance'))  { el('jBalance').textContent = '-$' + maxDD.toFixed(2); }
     if (el('jMaxDDPct')) { el('jMaxDDPct').textContent = maxDDPct.toFixed(1) + '%'; el('jMaxDDPct').style.color = maxDDPct > 20 ? 'var(--bear)' : 'var(--yellow)'; }
-    if (el('jMaxDDAbs')) el('jMaxDDAbs').textContent = '$' + maxDD.toFixed(2) + ' drawdown';
+    if (el('jMaxDDAbs')) el('jMaxDDAbs').textContent = '-$' + maxDD.toFixed(2) + ' peak-to-trough';
     if (el('jMaxDDBar')) el('jMaxDDBar').style.width = Math.min(maxDDPct / 30 * 100, 100) + '%';
 
     // Streaks + last 10
@@ -4944,7 +4953,7 @@ async function loadAlphaJournal(userId, activeAccount) {
     buildTable('jDailyTable', dailyRows);
   }
 
-  // ── Trade History Table ────────────────────────────────────────────
+  // ── Trade History Table (paginated) ───────────────────────────────
   const tbody  = document.getElementById('journalBody');
   const status = document.getElementById('journalStatus');
   const tradesSorted = [...trades].reverse(); // newest first
@@ -4962,28 +4971,88 @@ async function loadAlphaJournal(userId, activeAccount) {
       </button>
     </td></tr>`;
     if (status) status.textContent = '0 trades';
+    const pg = document.getElementById('jPagination');
+    if (pg) pg.style.display = 'none';
   } else {
     if (status) status.textContent = tradesSorted.length + ' trades';
-    if (tbody) tbody.innerHTML = tradesSorted.map(t => {
-      const pnl = parseFloat(t.profit ?? 0);
-      const dir = t.direction === 'buy' ? '<span class="trade-dir long">▲ LONG</span>' : '<span class="trade-dir short">▼ SHORT</span>';
-      const pnlClass = pnl >= 0 ? 'trade-pnl pos' : 'trade-pnl neg';
-      const pnlStr = (pnl >= 0 ? '+' : '') + '$' + Math.abs(pnl).toFixed(2);
-      const openT  = t.open_time  ? new Date(t.open_time).toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'}) : '—';
-      const closeT = t.close_time ? new Date(t.close_time).toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'}) : '—';
-      return `<tr>
-        <td><div class="trade-sym">${t.symbol || '—'}</div></td>
-        <td>${dir}</td>
-        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${t.entry ? parseFloat(t.entry).toFixed(5) : '—'}</td>
-        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${t.exit_price ? parseFloat(t.exit_price).toFixed(5) : '—'}</td>
-        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${openT}</td>
-        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${closeT}</td>
-        <td style="font-family:var(--font-mono);font-size:12px">${t.volume ?? '—'}</td>
-        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${jFmtHold(t.hold_secs)}</td>
-        <td class="${pnlClass}">${pnlStr}</td>
-      </tr>`;
-    }).join('');
+    _jTradesAll = tradesSorted;
+    _jPage = 1;
+    jRenderPage(1);
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TRADE TABLE PAGINATION
+// ─────────────────────────────────────────────────────────────────────────────
+const J_PAGE_SIZE = 20;
+let _jTradesAll = [];
+let _jPage = 1;
+
+function jTradeRow(t) {
+  const pnl = parseFloat(t.profit ?? 0);
+  // MT5 sends deal type (close side): 'sell' closes a LONG, 'buy' closes a SHORT
+  const isLong = t.direction === 'sell';
+  const dir = isLong
+    ? '<span class="trade-dir long">▲ LONG</span>'
+    : '<span class="trade-dir short">▼ SHORT</span>';
+  const pnlClass = pnl >= 0 ? 'trade-pnl pos' : 'trade-pnl neg';
+  const pnlStr = (pnl >= 0 ? '+' : '') + '$' + Math.abs(pnl).toFixed(2);
+  const openT  = t.open_time  ? new Date(t.open_time).toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'}) : '—';
+  const closeT = t.close_time ? new Date(t.close_time).toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'}) : '—';
+  // For XAUUSD use 2 decimal places; for FX use 5
+  const prec = (t.symbol||'').includes('XAU') || (t.symbol||'').includes('BTC') ? 2 : 5;
+  return `<tr>
+    <td><div class="trade-sym">${t.symbol || '—'}</div></td>
+    <td>${dir}</td>
+    <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${t.entry ? parseFloat(t.entry).toFixed(prec) : '—'}</td>
+    <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${t.exit_price ? parseFloat(t.exit_price).toFixed(prec) : '—'}</td>
+    <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${openT}</td>
+    <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${closeT}</td>
+    <td style="font-family:var(--font-mono);font-size:12px">${t.volume ?? '—'}</td>
+    <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${jFmtHold(t.hold_secs)}</td>
+    <td class="${pnlClass}">${pnlStr}</td>
+  </tr>`;
+}
+
+function jRenderPage(page) {
+  _jPage = page;
+  const total = _jTradesAll.length;
+  const pages = Math.ceil(total / J_PAGE_SIZE);
+  const start = (page - 1) * J_PAGE_SIZE;
+  const end   = Math.min(start + J_PAGE_SIZE, total);
+  const slice = _jTradesAll.slice(start, end);
+
+  const tbody = document.getElementById('journalBody');
+  if (tbody) tbody.innerHTML = slice.map(jTradeRow).join('');
+
+  // Update pagination info
+  const pg = document.getElementById('jPagination');
+  if (pg) pg.style.display = 'flex';
+  const el = id => document.getElementById(id);
+  if (el('jPageFrom'))  el('jPageFrom').textContent  = start + 1;
+  if (el('jPageTo'))    el('jPageTo').textContent    = end;
+  if (el('jPageTotal')) el('jPageTotal').textContent = total;
+
+  // Build page buttons
+  const btnWrap = document.getElementById('jPageButtons');
+  if (!btnWrap) return;
+  const btnStyle = (active) =>
+    `style="padding:5px 10px;border-radius:6px;border:1px solid ${active?'var(--teal)':'#30363d'};background:${active?'rgba(38,166,154,.15)':'transparent'};color:${active?'var(--teal)':'#8b949e'};font-size:12px;font-weight:${active?'700':'400'};cursor:${active?'default':'pointer'};font-family:var(--font-mono);transition:.15s;"`;
+
+  let html = `<button ${btnStyle(false)} onclick="jRenderPage(${Math.max(1,page-1)})" ${page===1?'disabled':''}>‹ Prev</button>`;
+
+  // Smart page range: show first, last, and window around current
+  const range = new Set([1, pages]);
+  for (let i = Math.max(1, page-2); i <= Math.min(pages, page+2); i++) range.add(i);
+  let sorted = [...range].sort((a,b)=>a-b), prev = 0;
+  for (const p of sorted) {
+    if (prev && p - prev > 1) html += `<span style="color:#484f58;padding:0 4px;">…</span>`;
+    html += `<button ${btnStyle(p===page)} onclick="jRenderPage(${p})">${p}</button>`;
+    prev = p;
+  }
+
+  html += `<button ${btnStyle(false)} onclick="jRenderPage(${Math.min(pages,page+1)})" ${page===pages?'disabled':''}>Next ›</button>`;
+  btnWrap.innerHTML = html;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
