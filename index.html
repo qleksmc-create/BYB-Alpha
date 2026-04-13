@@ -1477,7 +1477,8 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
     </div>
     <nav class="nav-links" id="desktopNav">
       <button class="nav-btn active" onclick="showPage('home')">Home</button>
-      <button class="nav-btn" onclick="showPage('dashboard')">Dashboard</button>
+      <button class="nav-btn" onclick="showPage('dashboard')">Bot Performance</button>
+      <button class="nav-btn" onclick="showPage('journal')">AlphaJournal</button>
       <button class="nav-btn" onclick="showPage('platforms')">Platforms</button>
       <button class="nav-btn" onclick="showPage('countries')">Countries</button>
       <button class="nav-btn" onclick="showPage('about')">About</button>
@@ -1497,7 +1498,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
           <span class="nav-user-name" id="navUsername">User</span>
           <span style="font-size:11px;color:#484f58;">▾</span>
         </div>
-        <button class="btn btn-ghost" style="font-size:12px;padding:7px 14px" onclick="showPage('dashboard')">Dashboard</button>
+        <button class="btn btn-ghost" style="font-size:12px;padding:7px 14px" onclick="showPage('dashboard')">Bot Performance</button>
         <button class="btn btn-ghost" style="font-size:12px;padding:7px 14px;color:#f85149" onclick="handleLogout()">Logout</button>
       </div>
       <button class="hamburger" id="hamburger" onclick="toggleMobile()" aria-label="Menu">
@@ -1511,7 +1512,8 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
 <div class="mobile-nav" id="mobileNav">
   <div class="mobile-nav-inner">
     <button class="mobile-nav-btn" onclick="showPage('home');toggleMobile()">Home</button>
-    <button class="mobile-nav-btn" onclick="showPage('dashboard');toggleMobile()">Dashboard</button>
+    <button class="mobile-nav-btn" onclick="showPage('dashboard');toggleMobile()">Bot Performance</button>
+    <button class="mobile-nav-btn" onclick="showPage('journal');toggleMobile()">AlphaJournal</button>
     <button class="mobile-nav-btn" onclick="showPage('platforms');toggleMobile()">Platforms</button>
     <button class="mobile-nav-btn" onclick="showPage('countries');toggleMobile()">Countries</button>
     <button class="mobile-nav-btn" onclick="showPage('about');toggleMobile()">About</button>
@@ -2349,9 +2351,51 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
     </div>
   </section>
 
-  <!-- ═══════════════ ALPHA JOURNAL ═══════════════ -->
-  <section class="section" style="padding-top:0;">
-    <div class="container">
+  </div><!-- /dashContent -->
+</div><!-- /dashboard -->
+
+<!-- ============================================================ PAGE: JOURNAL ============================================================ -->
+<div class="page" id="page-journal">
+  <div class="container" style="padding-top:40px;padding-bottom:40px;">
+
+    <!-- GATE: Not logged in -->
+    <div class="dash-gate" id="journalGateLogin" style="display:none;">
+      <div style="background:#161b22;border:1px solid #30363d;border-radius:20px;padding:48px 40px;max-width:420px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5);">
+        <div style="font-size:52px;margin-bottom:16px;">🔒</div>
+        <div id="jgLoginTitle" style="font-size:22px;font-weight:700;color:#c9d1d9;margin-bottom:10px;">Login to Access Journal</div>
+        <div id="jgLoginSub" style="font-size:14px;color:#8b949e;margin-bottom:28px;line-height:1.6;">Create a free account, then subscribe to AlphaJournal to access your private trading data.</div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <button id="jgLoginBtn1" class="btn btn-primary" onclick="openAuthModal('login')">Login</button>
+          <button id="jgLoginBtn2" class="btn btn-ghost" onclick="openAuthModal('register')">Register Free</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GATE: Logged in but no subscription -->
+    <div class="dash-gate" id="journalGateSub" style="display:none;">
+      <div style="background:#161b22;border:1px solid rgba(38,166,154,.25);border-radius:20px;padding:48px 40px;max-width:480px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5);">
+        <div style="font-size:52px;margin-bottom:16px;">📓</div>
+        <div id="jgSubTitle" style="font-size:22px;font-weight:700;color:#c9d1d9;margin-bottom:10px;">AlphaJournal Subscription Required</div>
+        <div id="jgSubDesc" style="font-size:14px;color:#8b949e;margin-bottom:8px;line-height:1.6;">Get full access to your private trading journal — trade history, win rate, P&L analytics and more, synced live from MT5.</div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">
+          <div style="background:rgba(38,166,154,.08);border:1px solid rgba(38,166,154,.2);border-radius:10px;padding:14px 24px;">
+            <div style="font-size:28px;font-weight:800;color:#26a69a;font-family:'IBM Plex Mono',monospace;">$29<span style="font-size:14px;font-weight:400;color:#8b949e;">/month</span></div>
+            <div style="font-size:11px;color:#484f58;margin-top:4px;text-transform:uppercase;letter-spacing:1px;">Cancel anytime</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:#484f58;margin-bottom:20px;line-height:1.8;">
+          ✓ Full trade history &nbsp;·&nbsp; ✓ Win rate & P&L analytics<br/>
+          ✓ MT5 auto-sync &nbsp;·&nbsp; ✓ Cancel anytime
+        </div>
+        <button id="jgSubBtn" onclick="subscribeJournal()" style="width:100%;padding:14px;background:linear-gradient(135deg,#26a69a,#089981);border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;box-shadow:0 4px 16px rgba(38,166,154,.3);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+          🚀 Subscribe for $29/month
+        </button>
+        <div style="font-size:11px;color:#30363d;margin-top:12px;">Secure payment via Stripe · SSL encrypted</div>
+      </div>
+    </div>
+
+    <!-- CONTENT: Subscribed -->
+    <div id="journalContent" style="display:none;">
       <div class="section-header reveal" style="margin-bottom:24px;">
         <div class="eyebrow" id="ew-journal">PRIVATE</div>
         <div class="section-title" id="st-journal">ALPHA <span class="teal">JOURNAL</span></div>
@@ -2396,10 +2440,10 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         </div>
       </div>
     </div>
-  </section>
 
-  </div><!-- /dashContent -->
-</div><!-- /dashboard -->
+  </div>
+</div><!-- /journal -->
+
 
 <!-- ============================================================ PAGE: PLATFORMS ============================================================ -->
 <div class="page" id="page-platforms">
@@ -3271,7 +3315,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
 <!-- ============================================================ JAVASCRIPT ============================================================ -->
 <script>
 /* ====== PAGE ROUTING ====== */
-const pages = ['home','dashboard','platforms','countries','about','faq','ai-support','contact'];
+const pages = ['home','dashboard','journal','platforms','countries','about','faq','ai-support','calendar','contact'];
 
 function showPage(id) {
   pages.forEach(p => document.getElementById('page-' + p).classList.remove('active'));
@@ -3284,8 +3328,9 @@ function showPage(id) {
   setTimeout(() => {
     document.querySelectorAll('#page-' + id + ' .reveal').forEach(el => revealObs.observe(el));
   }, 50);
-  if (id === 'dashboard') setTimeout(drawDashCharts, 100);
-  if (id === 'home') setTimeout(drawHeroChart, 100);
+  if (id === 'dashboard') { setTimeout(drawDashCharts, 100); setTimeout(checkDashboardState, 50); }
+  if (id === 'journal')   setTimeout(checkJournalState, 50);
+  if (id === 'home')      setTimeout(drawHeroChart, 100);
 }
 
 /* ====== MOBILE NAV ====== */
@@ -4367,7 +4412,6 @@ async function checkDashboardState() {
     gateMT5.style.display = 'none';
     content.style.display = 'block';
     drawDashCharts();
-    loadAlphaJournal(profile.id, accounts[0]);
   }
 }
 
@@ -4449,6 +4493,79 @@ async function loadAlphaJournal(userId, activeAccount) {
     }).join('');
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// JOURNAL PAGE STATE CHECK
+// ─────────────────────────────────────────────────────────────────────────────
+async function checkJournalState() {
+  const gateLogin = document.getElementById('journalGateLogin');
+  const gateSub   = document.getElementById('journalGateSub');
+  const content   = document.getElementById('journalContent');
+  if (!gateLogin || !gateSub || !content) return;
+
+  const { data: { user } } = await _supa.auth.getUser();
+
+  if (!user) {
+    gateLogin.style.display = 'flex';
+    gateSub.style.display   = 'none';
+    content.style.display   = 'none';
+    return;
+  }
+
+  // Logged in — check subscription status
+  const { data: profile } = await _supa
+    .from('users')
+    .select('id, journal_subscription_active')
+    .eq('email', user.email)
+    .single();
+
+  if (!profile) {
+    gateLogin.style.display = 'flex';
+    gateSub.style.display   = 'none';
+    content.style.display   = 'none';
+    return;
+  }
+
+  if (!profile.journal_subscription_active) {
+    gateLogin.style.display = 'none';
+    gateSub.style.display   = 'flex';
+    content.style.display   = 'none';
+    return;
+  }
+
+  // Subscribed — show journal
+  gateLogin.style.display = 'none';
+  gateSub.style.display   = 'none';
+  content.style.display   = 'block';
+
+  // Load MT5 account for journal
+  const { data: accounts } = await _supa
+    .from('mt5_accounts')
+    .select('*')
+    .eq('user_id', profile.id)
+    .eq('is_active', true);
+
+  if (accounts && accounts.length > 0) {
+    loadAlphaJournal(profile.id, accounts[0]);
+  } else {
+    const tbody  = document.getElementById('journalBody');
+    const status = document.getElementById('journalStatus');
+    if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#484f58;">
+      <div style="font-size:36px;margin-bottom:12px;">📡</div>
+      <div style="font-size:15px;font-weight:600;color:#c9d1d9;margin-bottom:8px;">No MT5 account connected</div>
+      <div style="font-size:13px;color:#484f58;margin-bottom:20px;">Go to Dashboard → add your MT5 account first.</div>
+      <button onclick="showPage('dashboard')" style="background:linear-gradient(135deg,#26a69a,#089981);border:none;color:#fff;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;">Go to Dashboard</button>
+    </td></tr>`;
+    if (status) status.textContent = 'No account';
+  }
+}
+
+function subscribeJournal() {
+  // TODO: Replace with real Stripe Payment Link once connected
+  const paymentLink = 'https://buy.stripe.com/PLACEHOLDER';
+  window.open(paymentLink, '_blank');
+}
+
 
 /* ====== SETTINGS PAGE ====== */
 async function loadSettingsPage() {
@@ -4823,11 +4940,6 @@ window.addEventListener('resize', () => {
         <div>④ MT5: Extras → Optionen → Expert Advisors → WebRequest aktivieren</div>
       </div>
     </div>
-
-    <!-- LOGOUT -->
-    <button onclick="handleLogout()" style="width:100%;padding:11px;background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;color:#f85149;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;" onmouseover="this.style.background='rgba(248,81,73,.15)'" onmouseout="this.style.background='rgba(248,81,73,.08)'">
-      🚪 Logout
-    </button>
   </div>
 </div>
 
@@ -4844,7 +4956,7 @@ window.addEventListener('resize', () => {
 const TRANSLATIONS = {
   en: {
     // Navigation
-    'nav-home':'Home','nav-dashboard':'Dashboard','nav-platforms':'Platforms',
+    'nav-home':'Home','nav-dashboard':'Bot Performance','nav-journal':'AlphaJournal','nav-platforms':'Platforms',
     'nav-countries':'Countries','nav-about':'About','nav-faq':'FAQ',
     'nav-ai-support':'AI Support','nav-calendar':'Calendar','nav-contact':'Contact',
     'nav-login':'Login','nav-get-started':'Get Started','nav-logout':'Logout',
@@ -4909,7 +5021,7 @@ const TRANSLATIONS = {
 
   de: {
     // Navigation
-    'nav-home':'Startseite','nav-dashboard':'Dashboard','nav-platforms':'Plattformen',
+    'nav-home':'Startseite','nav-dashboard':'Bot Performance','nav-journal':'AlphaJournal','nav-platforms':'Plattformen',
     'nav-countries':'Länder','nav-about':'Über uns','nav-faq':'FAQ',
     'nav-ai-support':'AI Support','nav-calendar':'Kalender','nav-contact':'Kontakt',
     'nav-login':'Login','nav-get-started':'Loslegen','nav-logout':'Abmelden',
@@ -4974,7 +5086,7 @@ const TRANSLATIONS = {
 
   es: {
     // Navigation
-    'nav-home':'Inicio','nav-dashboard':'Dashboard','nav-platforms':'Plataformas',
+    'nav-home':'Inicio','nav-dashboard':'Bot Performance','nav-journal':'AlphaJournal','nav-platforms':'Plataformas',
     'nav-countries':'Países','nav-about':'Sobre nosotros','nav-faq':'FAQ',
     'nav-ai-support':'AI Support','nav-calendar':'Calendario','nav-contact':'Contacto',
     'nav-login':'Login','nav-get-started':'Comenzar','nav-logout':'Cerrar sesión',
@@ -5039,7 +5151,7 @@ const TRANSLATIONS = {
 
   fr: {
     // Navigation
-    'nav-home':'Accueil','nav-dashboard':'Dashboard','nav-platforms':'Plateformes',
+    'nav-home':'Accueil','nav-dashboard':'Bot Performance','nav-journal':'AlphaJournal','nav-platforms':'Plateformes',
     'nav-countries':'Pays','nav-about':'À propos','nav-faq':'FAQ',
     'nav-ai-support':'AI Support','nav-calendar':'Calendrier','nav-contact':'Contact',
     'nav-login':'Login','nav-get-started':'Démarrer','nav-logout':'Déconnexion',
@@ -5107,25 +5219,27 @@ const TRANSLATIONS = {
 // Translation key to selector/id mapping
 const TRANSLATION_MAP = [
   // ── Desktop Navigation ──
-  { id: null, selector: '#desktopNav .nav-btn:nth-child(1)', key: 'nav-home' },
-  { id: null, selector: '#desktopNav .nav-btn:nth-child(2)', key: 'nav-dashboard' },
-  { id: null, selector: '#desktopNav .nav-btn:nth-child(3)', key: 'nav-platforms' },
-  { id: null, selector: '#desktopNav .nav-btn:nth-child(4)', key: 'nav-countries' },
-  { id: null, selector: '#desktopNav .nav-btn:nth-child(5)', key: 'nav-about' },
-  { id: null, selector: '#desktopNav .nav-btn:nth-child(6)', key: 'nav-faq' },
-  { id: null, selector: '#desktopNav .nav-btn:nth-child(7)', key: 'nav-ai-support' },
-  { id: null, selector: '#desktopNav .nav-btn:nth-child(8)', key: 'nav-calendar' },
-  { id: null, selector: '#desktopNav .nav-btn:nth-child(9)', key: 'nav-contact' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(1)',  key: 'nav-home' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(2)',  key: 'nav-dashboard' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(3)',  key: 'nav-journal' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(4)',  key: 'nav-platforms' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(5)',  key: 'nav-countries' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(6)',  key: 'nav-about' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(7)',  key: 'nav-faq' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(8)',  key: 'nav-ai-support' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(9)',  key: 'nav-calendar' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(10)', key: 'nav-contact' },
   // ── Mobile Navigation ──
-  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(1)', key: 'nav-home' },
-  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(2)', key: 'nav-dashboard' },
-  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(3)', key: 'nav-platforms' },
-  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(4)', key: 'nav-countries' },
-  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(5)', key: 'nav-about' },
-  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(6)', key: 'nav-faq' },
-  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(7)', key: 'nav-ai-support' },
-  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(8)', key: 'nav-calendar' },
-  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(9)', key: 'nav-contact' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(1)',  key: 'nav-home' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(2)',  key: 'nav-dashboard' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(3)',  key: 'nav-journal' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(4)',  key: 'nav-platforms' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(5)',  key: 'nav-countries' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(6)',  key: 'nav-about' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(7)',  key: 'nav-faq' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(8)',  key: 'nav-ai-support' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(9)',  key: 'nav-calendar' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(10)', key: 'nav-contact' },
   // ── Nav CTA ──
   { id: null, selector: '#navLoggedOut .btn-ghost',   key: 'nav-login' },
   { id: null, selector: '#navLoggedOut .btn-primary', key: 'nav-get-started' },
