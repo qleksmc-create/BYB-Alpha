@@ -1390,8 +1390,16 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
 .dash-gate-title{font-size:24px;font-weight:700;color:#c9d1d9}
 .dash-gate-sub{font-size:15px;color:#8b949e;max-width:360px}
 
+/* ====== JOURNAL CHART GRIDS (responsive) ====== */
+@media(max-width:700px){
+  .journal-chart-grid-1,
+  .journal-chart-grid-2,
+  .journal-table-grid { grid-template-columns: 1fr !important; }
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -2396,33 +2404,246 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
 
     <!-- CONTENT: Subscribed -->
     <div id="journalContent" style="display:none;">
+
+      <!-- ── Header ──────────────────────────────────────────────── -->
       <div class="section-header reveal" style="margin-bottom:24px;">
         <div class="eyebrow" id="ew-journal">PRIVATE</div>
         <div class="section-title" id="st-journal">ALPHA <span class="teal">JOURNAL</span></div>
-        <p class="section-sub" id="ss-journal" style="margin-bottom:0">Your personal trade history synced from your connected MT5 account.</p>
+        <p class="section-sub" id="ss-journal" style="margin-bottom:0">Your personal trade analytics synced live from MT5.</p>
       </div>
 
-      <!-- Journal KPIs -->
-      <div id="journalKpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px;">
-        <div class="kpi-card card card-glow" style="text-align:center;">
-          <div class="kpi-label">MY TOTAL TRADES</div>
-          <div class="kpi-val" id="jKpiTrades" style="color:var(--teal)">—</div>
+      <!-- ── Account Switcher Bar ──────────────────────────────────── -->
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
+        <div class="card" style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-color:rgba(38,166,154,.3);background:rgba(38,166,154,.06);flex:1;min-width:260px;max-width:480px;">
+          <div style="font-size:22px;">📡</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:10px;letter-spacing:1.5px;color:var(--teal);font-weight:700;text-transform:uppercase;margin-bottom:4px;">Connected Account</div>
+            <select id="jAccountSelect" onchange="switchJournalAccount(this.value)"
+              style="width:100%;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:13px;font-weight:600;padding:6px 10px;cursor:pointer;outline:none;">
+              <option value="">Loading accounts…</option>
+            </select>
+          </div>
         </div>
-        <div class="kpi-card card card-glow" style="text-align:center;">
-          <div class="kpi-label">MY WIN RATE</div>
-          <div class="kpi-val" id="jKpiWinRate" style="color:var(--bull)">—</div>
+        <div style="font-size:12px;color:#484f58;font-family:var(--font-mono);">
+          Last sync: <span id="jLastSync" style="color:var(--text2);">—</span>
         </div>
-        <div class="kpi-card card card-glow" style="text-align:center;">
-          <div class="kpi-label">MY TOTAL P&L</div>
-          <div class="kpi-val" id="jKpiPnl" style="color:var(--bull)">—</div>
+        <button onclick="checkJournalState()" style="background:rgba(38,166,154,.1);border:1px solid rgba(38,166,154,.3);color:var(--teal);padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:.2s;" onmouseover="this.style.background='rgba(38,166,154,.2)'" onmouseout="this.style.background='rgba(38,166,154,.1)'">⟳ REFRESH</button>
+      </div>
+
+      <!-- ── Account Overview ──────────────────────────────────────── -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;">
+        <div class="card" style="padding:16px 18px;border-color:rgba(38,166,154,.2);">
+          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">BALANCE</div>
+          <div id="jBalance" style="font-size:22px;font-weight:800;color:var(--teal);font-family:var(--font-mono);">—</div>
         </div>
-        <div class="kpi-card card card-glow" style="text-align:center;">
-          <div class="kpi-label">CONNECTED ACCOUNT</div>
-          <div class="kpi-val" id="jKpiAccount" style="color:var(--text2);font-size:14px;">—</div>
+        <div class="card" style="padding:16px 18px;border-color:rgba(38,166,154,.2);">
+          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">TOTAL P&amp;L</div>
+          <div id="jTotalPnl" style="font-size:22px;font-weight:800;color:var(--bull);font-family:var(--font-mono);">—</div>
+        </div>
+        <div class="card" style="padding:16px 18px;">
+          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">WIN RATE</div>
+          <div id="jWinRate" style="font-size:22px;font-weight:800;color:var(--bull);font-family:var(--font-mono);">—</div>
+        </div>
+        <div class="card" style="padding:16px 18px;">
+          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">PROFIT FACTOR</div>
+          <div id="jProfitFactor" style="font-size:22px;font-weight:800;color:var(--text1);font-family:var(--font-mono);">—</div>
         </div>
       </div>
 
-      <!-- Journal Trade Table -->
+      <!-- ── Key Metrics Grid ──────────────────────────────────────── -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;">
+        <div class="card" style="padding:14px 16px;">
+          <div style="font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:4px;">EXPECTANCY</div>
+          <div id="jExpectancy" style="font-size:18px;font-weight:700;color:var(--text1);font-family:var(--font-mono);">—</div>
+          <div style="font-size:10px;color:#484f58;margin-top:2px;">per trade</div>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <div style="font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:4px;">AVG WIN</div>
+          <div id="jAvgWin" style="font-size:18px;font-weight:700;color:var(--bull);font-family:var(--font-mono);">—</div>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <div style="font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:4px;">AVG LOSS</div>
+          <div id="jAvgLoss" style="font-size:18px;font-weight:700;color:var(--bear);font-family:var(--font-mono);">—</div>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <div style="font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:4px;">LARGEST WIN</div>
+          <div id="jLargestWin" style="font-size:18px;font-weight:700;color:var(--bull);font-family:var(--font-mono);">—</div>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <div style="font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:4px;">LARGEST LOSS</div>
+          <div id="jLargestLoss" style="font-size:18px;font-weight:700;color:var(--bear);font-family:var(--font-mono);">—</div>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <div style="font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:4px;">TOTAL TRADES</div>
+          <div id="jTotalTrades" style="font-size:18px;font-weight:700;color:var(--teal);font-family:var(--font-mono);">—</div>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <div style="font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:4px;">WINS / LOSSES</div>
+          <div id="jWinsLosses" style="font-size:18px;font-weight:700;color:var(--text1);font-family:var(--font-mono);">—</div>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <div style="font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:4px;">AVG HOLD TIME</div>
+          <div id="jAvgHold" style="font-size:18px;font-weight:700;color:var(--text1);font-family:var(--font-mono);">—</div>
+        </div>
+      </div>
+
+      <!-- ── Risk Management ───────────────────────────────────────── -->
+      <div class="card" style="padding:20px 24px;margin-bottom:20px;">
+        <div style="font-size:11px;letter-spacing:2px;color:#484f58;font-weight:700;margin-bottom:16px;">RISK MANAGEMENT</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;">
+          <!-- Max Drawdown -->
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:12px;color:var(--text2);">Max Drawdown</span>
+              <span id="jMaxDDPct" style="font-size:12px;font-weight:700;color:var(--bear);font-family:var(--font-mono);">—</span>
+            </div>
+            <div style="background:#161b22;border-radius:4px;height:8px;overflow:hidden;">
+              <div id="jMaxDDBar" style="height:100%;background:linear-gradient(90deg,#26a69a,#ef5350);border-radius:4px;width:0%;transition:width .8s ease;"></div>
+            </div>
+            <div id="jMaxDDAbs" style="font-size:11px;color:#484f58;margin-top:4px;">—</div>
+          </div>
+          <!-- Win Rate Bar -->
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:12px;color:var(--text2);">Win Rate Target (60%)</span>
+              <span id="jWinRateBar2" style="font-size:12px;font-weight:700;color:var(--bull);font-family:var(--font-mono);">—</span>
+            </div>
+            <div style="background:#161b22;border-radius:4px;height:8px;overflow:hidden;">
+              <div id="jWinRateBarFill" style="height:100%;background:linear-gradient(90deg,#26a69a,#00e676);border-radius:4px;width:0%;transition:width .8s ease;"></div>
+            </div>
+            <div style="font-size:11px;color:#484f58;margin-top:4px;">Target: 60%</div>
+          </div>
+          <!-- Profit Factor Bar -->
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:12px;color:var(--text2);">Profit Factor Target (1.5)</span>
+              <span id="jPFBar2" style="font-size:12px;font-weight:700;color:var(--teal);font-family:var(--font-mono);">—</span>
+            </div>
+            <div style="background:#161b22;border-radius:4px;height:8px;overflow:hidden;">
+              <div id="jPFBarFill" style="height:100%;background:linear-gradient(90deg,#26a69a,#00b8d4);border-radius:4px;width:0%;transition:width .8s ease;"></div>
+            </div>
+            <div style="font-size:11px;color:#484f58;margin-top:4px;">Target: 1.5</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Charts Row 1: Equity Curve + Daily PnL ────────────────── -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;" class="journal-chart-grid-1">
+        <div class="card" style="padding:20px;">
+          <div style="font-size:11px;letter-spacing:2px;color:#484f58;font-weight:700;margin-bottom:14px;">📈 EQUITY CURVE</div>
+          <canvas id="jChartEquity" height="120"></canvas>
+        </div>
+        <div class="card" style="padding:20px;">
+          <div style="font-size:11px;letter-spacing:2px;color:#484f58;font-weight:700;margin-bottom:14px;">📊 DAILY P&amp;L</div>
+          <canvas id="jChartDailyPnl" height="120"></canvas>
+        </div>
+      </div>
+
+      <!-- ── Charts Row 2: Win Rate Rolling + Symbol Breakdown ─────── -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;" class="journal-chart-grid-2">
+        <div class="card" style="padding:20px;">
+          <div style="font-size:11px;letter-spacing:2px;color:#484f58;font-weight:700;margin-bottom:14px;">🎯 ROLLING WIN RATE (20 trades)</div>
+          <canvas id="jChartWinRate" height="110"></canvas>
+        </div>
+        <div class="card" style="padding:20px;">
+          <div style="font-size:11px;letter-spacing:2px;color:#484f58;font-weight:700;margin-bottom:14px;">🪙 P&amp;L BY SYMBOL</div>
+          <canvas id="jChartSymbol" height="110"></canvas>
+        </div>
+      </div>
+
+      <!-- ── Streaks + Last 10 ──────────────────────────────────────── -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px;">
+        <div class="card" style="padding:20px;text-align:center;">
+          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:8px;">🏆 BEST WIN STREAK</div>
+          <div id="jBestStreak" style="font-size:36px;font-weight:800;color:var(--bull);font-family:var(--font-mono);">—</div>
+          <div style="font-size:11px;color:#484f58;margin-top:4px;">consecutive wins</div>
+        </div>
+        <div class="card" style="padding:20px;text-align:center;">
+          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:8px;">💀 WORST LOSS STREAK</div>
+          <div id="jWorstStreak" style="font-size:36px;font-weight:800;color:var(--bear);font-family:var(--font-mono);">—</div>
+          <div style="font-size:11px;color:#484f58;margin-top:4px;">consecutive losses</div>
+        </div>
+        <div class="card" style="padding:20px;">
+          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:12px;">🕐 LAST 10 TRADES</div>
+          <div id="jLast10" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        </div>
+        <div class="card" style="padding:20px;text-align:center;">
+          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:8px;">⏱ AVG HOLD TIME</div>
+          <div id="jAvgHold2" style="font-size:24px;font-weight:800;color:var(--teal);font-family:var(--font-mono);">—</div>
+          <div style="font-size:11px;color:#484f58;margin-top:4px;">per trade</div>
+        </div>
+      </div>
+
+      <!-- ── Analysis Tables ───────────────────────────────────────── -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;" class="journal-table-grid">
+
+        <!-- Symbol Breakdown -->
+        <div class="card" style="padding:20px;">
+          <div style="font-size:11px;letter-spacing:2px;color:#484f58;font-weight:700;margin-bottom:14px;">🪙 SYMBOL BREAKDOWN</div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;">
+              <thead><tr style="border-bottom:1px solid #21262d;">
+                <th style="text-align:left;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">SYMBOL</th>
+                <th style="text-align:right;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">TRADES</th>
+                <th style="text-align:right;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">WIN%</th>
+                <th style="text-align:right;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">P&amp;L</th>
+              </tr></thead>
+              <tbody id="jSymbolTable"><tr><td colspan="4" style="text-align:center;padding:20px;color:#484f58;">—</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Day of Week -->
+        <div class="card" style="padding:20px;">
+          <div style="font-size:11px;letter-spacing:2px;color:#484f58;font-weight:700;margin-bottom:14px;">📅 DAY OF WEEK</div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;">
+              <thead><tr style="border-bottom:1px solid #21262d;">
+                <th style="text-align:left;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">DAY</th>
+                <th style="text-align:right;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">TRADES</th>
+                <th style="text-align:right;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">WIN%</th>
+                <th style="text-align:right;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">P&amp;L</th>
+              </tr></thead>
+              <tbody id="jDowTable"><tr><td colspan="4" style="text-align:center;padding:20px;color:#484f58;">—</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Hour by Hour -->
+        <div class="card" style="padding:20px;">
+          <div style="font-size:11px;letter-spacing:2px;color:#484f58;font-weight:700;margin-bottom:14px;">🕐 HOUR BY HOUR</div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;">
+              <thead><tr style="border-bottom:1px solid #21262d;">
+                <th style="text-align:left;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">HOUR</th>
+                <th style="text-align:right;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">TRADES</th>
+                <th style="text-align:right;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">WIN%</th>
+                <th style="text-align:right;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">P&amp;L</th>
+              </tr></thead>
+              <tbody id="jHourTable"><tr><td colspan="4" style="text-align:center;padding:20px;color:#484f58;">—</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Daily Results -->
+        <div class="card" style="padding:20px;">
+          <div style="font-size:11px;letter-spacing:2px;color:#484f58;font-weight:700;margin-bottom:14px;">📆 DAILY RESULTS</div>
+          <div style="overflow-x:auto;max-height:280px;">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;">
+              <thead style="position:sticky;top:0;background:#161b22;"><tr style="border-bottom:1px solid #21262d;">
+                <th style="text-align:left;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">DATE</th>
+                <th style="text-align:right;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">TRADES</th>
+                <th style="text-align:right;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">WIN%</th>
+                <th style="text-align:right;padding:6px 8px;color:#484f58;font-size:10px;letter-spacing:1px;">P&amp;L</th>
+              </tr></thead>
+              <tbody id="jDailyTable"><tr><td colspan="4" style="text-align:center;padding:20px;color:#484f58;">—</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Full Trade History ─────────────────────────────────────── -->
       <div class="trade-log card reveal">
         <div class="log-header">
           <span class="log-title">📓 My Trade History</span>
@@ -2431,15 +2652,16 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         <div style="overflow-x:auto">
           <table class="log-table">
             <thead>
-              <tr><th>PAIR</th><th>DIRECTION</th><th>OPEN TIME</th><th>CLOSE TIME</th><th>LOTS</th><th>P&L</th><th>COMMENT</th></tr>
+              <tr><th>PAIR</th><th>DIR</th><th>ENTRY</th><th>EXIT</th><th>OPEN TIME</th><th>CLOSE TIME</th><th>LOTS</th><th>HOLD</th><th>P&amp;L</th></tr>
             </thead>
             <tbody id="journalBody">
-              <tr><td colspan="7" style="text-align:center;padding:20px;color:#484f58;font-size:13px;">Loading...</td></tr>
+              <tr><td colspan="9" style="text-align:center;padding:20px;color:#484f58;font-size:13px;">Loading...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
-    </div>
+
+    </div><!-- /journalContent -->
 
   </div>
 </div><!-- /journal -->
@@ -4415,80 +4637,350 @@ async function checkDashboardState() {
   }
 }
 
-async function loadAlphaJournal(userId, activeAccount) {
-  // Show connected account name
-  const accLabel = activeAccount.label || activeAccount.mt5_server || 'MT5 Account';
-  const jKpiAccount = document.getElementById('jKpiAccount');
-  if (jKpiAccount) jKpiAccount.textContent = accLabel;
+// ─────────────────────────────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+function jFmt$(v) {
+  if (v == null) return '—';
+  const n = parseFloat(v);
+  if (isNaN(n)) return '—';
+  return (n >= 0 ? '+' : '') + '$' + Math.abs(n).toFixed(2);
+}
+function jFmtHold(secs) {
+  if (!secs || secs <= 0) return '—';
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const s = secs % 60;
+  if (h > 0) return h + 'h ' + m + 'm';
+  if (m > 0) return m + 'm ' + s + 's';
+  return s + 's';
+}
+function jPnlColor(v) { return v >= 0 ? 'var(--bull)' : 'var(--bear)'; }
 
-  // Query trade journal view
+// Destroy and recreate a Chart.js instance safely
+let _jCharts = {};
+function jChart(id, cfg) {
+  if (_jCharts[id]) { try { _jCharts[id].destroy(); } catch(e){} }
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  _jCharts[id] = new Chart(ctx, cfg);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SWITCH ACCOUNT (called from dropdown)
+// ─────────────────────────────────────────────────────────────────────────────
+let _jCurrentUserId = null;
+let _jAllAccounts   = [];
+
+async function switchJournalAccount(accountId) {
+  if (!_jCurrentUserId || !accountId) return;
+  const acc = _jAllAccounts.find(a => String(a.id) === String(accountId));
+  if (acc) loadAlphaJournal(_jCurrentUserId, acc);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MAIN JOURNAL LOADER
+// ─────────────────────────────────────────────────────────────────────────────
+async function loadAlphaJournal(userId, activeAccount) {
+  _jCurrentUserId = userId;
+
+  // ── Update account switcher dropdown ──────────────────────────────
+  const sel = document.getElementById('jAccountSelect');
+  if (sel && _jAllAccounts.length > 0) {
+    sel.innerHTML = _jAllAccounts.map(a =>
+      `<option value="${a.id}" ${String(a.id)===String(activeAccount.id)?'selected':''}>${a.label||a.mt5_server||'Account '+a.id}</option>`
+    ).join('');
+  }
+
+  // ── Query summary view filtered by mt5_account_id ─────────────────
   const { data: summary, error: sumErr } = await _supa
     .from('user_journal_dashboard')
     .select('*')
     .eq('user_id', userId)
-    .single();
+    .eq('mt5_account_id', activeAccount.id)
+    .maybeSingle();
 
   if (sumErr) console.error('[Journal] Summary error:', sumErr.message);
 
-  if (summary) {
-    const kpiTrades  = document.getElementById('jKpiTrades');
-    const kpiWinRate = document.getElementById('jKpiWinRate');
-    const kpiPnl     = document.getElementById('jKpiPnl');
-    if (kpiTrades)  kpiTrades.textContent  = summary.total_trades ?? '0';
-    if (kpiWinRate) kpiWinRate.textContent = summary.win_rate != null ? summary.win_rate.toFixed(1) + '%' : '—';
-    if (kpiPnl) {
-      const pnl = summary.total_pnl ?? 0;
-      kpiPnl.textContent = (pnl >= 0 ? '+' : '') + '$' + pnl.toFixed(2);
-      kpiPnl.style.color = pnl >= 0 ? 'var(--bull)' : 'var(--bear)';
-    }
-  }
-
-  // Query individual trades
-  const { data: trades, error: tradeErr } = await _supa
+  // ── Query all individual trades for this account ───────────────────
+  const { data: rawTrades, error: tradeErr } = await _supa
     .from('user_trades_detail')
     .select('*')
     .eq('user_id', userId)
-    .order('close_time', { ascending: false })
-    .limit(50);
+    .eq('mt5_account_id', activeAccount.id)
+    .order('close_time', { ascending: true });
 
   if (tradeErr) console.error('[Journal] Trades error:', tradeErr.message);
+  const trades = rawTrades || [];
 
+  // ── Last sync time ─────────────────────────────────────────────────
+  const jLastSync = document.getElementById('jLastSync');
+  if (jLastSync && summary?.last_trade_time) {
+    jLastSync.textContent = new Date(summary.last_trade_time).toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'});
+  }
+
+  // ── Populate KPI cards ─────────────────────────────────────────────
+  if (summary) {
+    const pnl = parseFloat(summary.total_pnl ?? 0);
+    const wr  = parseFloat(summary.win_rate ?? 0);
+    const pf  = parseFloat(summary.profit_factor ?? 0);
+
+    const el = id => document.getElementById(id);
+    if (el('jTotalPnl'))     { el('jTotalPnl').textContent = jFmt$(pnl); el('jTotalPnl').style.color = jPnlColor(pnl); }
+    if (el('jBalance'))      el('jBalance').textContent = '$' + Math.abs(pnl).toFixed(2);
+    if (el('jWinRate'))      { el('jWinRate').textContent = wr.toFixed(1) + '%'; el('jWinRate').style.color = wr >= 50 ? 'var(--bull)' : 'var(--bear)'; }
+    if (el('jProfitFactor')) { el('jProfitFactor').textContent = pf > 0 ? pf.toFixed(2) : '—'; el('jProfitFactor').style.color = pf >= 1 ? 'var(--bull)' : 'var(--bear)'; }
+    if (el('jExpectancy'))   { el('jExpectancy').textContent = jFmt$(summary.expectancy); el('jExpectancy').style.color = jPnlColor(summary.expectancy); }
+    if (el('jAvgWin'))       el('jAvgWin').textContent = jFmt$(summary.avg_win);
+    if (el('jAvgLoss'))      el('jAvgLoss').textContent = jFmt$(summary.avg_loss);
+    if (el('jLargestWin'))   el('jLargestWin').textContent = jFmt$(summary.largest_win);
+    if (el('jLargestLoss'))  el('jLargestLoss').textContent = jFmt$(summary.largest_loss);
+    if (el('jTotalTrades'))  el('jTotalTrades').textContent = summary.total_trades ?? '0';
+    if (el('jWinsLosses'))   el('jWinsLosses').textContent = (summary.wins ?? '0') + ' / ' + (summary.losses ?? '0');
+    if (el('jAvgHold'))      el('jAvgHold').textContent = jFmtHold(parseInt(summary.avg_hold_secs ?? 0));
+    if (el('jAvgHold2'))     el('jAvgHold2').textContent = jFmtHold(parseInt(summary.avg_hold_secs ?? 0));
+
+    // Risk bars
+    if (el('jWinRateBar2'))   el('jWinRateBar2').textContent = wr.toFixed(1) + '%';
+    if (el('jWinRateBarFill')) el('jWinRateBarFill').style.width = Math.min(wr / 60 * 100, 100) + '%';
+    if (el('jPFBar2'))        el('jPFBar2').textContent = pf > 0 ? pf.toFixed(2) : '—';
+    if (el('jPFBarFill'))     el('jPFBarFill').style.width = Math.min(pf / 1.5 * 100, 100) + '%';
+  }
+
+  // ── Compute metrics from raw trades ───────────────────────────────
+  if (trades.length > 0) {
+    // Equity curve
+    let running = 0;
+    const eqLabels = [], eqData = [];
+    trades.forEach((t, i) => {
+      running += parseFloat(t.profit ?? 0);
+      if (i % Math.max(1, Math.floor(trades.length / 60)) === 0 || i === trades.length - 1) {
+        eqLabels.push(t.close_time ? new Date(t.close_time).toLocaleDateString('de-AT',{month:'short',day:'numeric'}) : i);
+        eqData.push(parseFloat(running.toFixed(2)));
+      }
+    });
+
+    // Max drawdown from equity curve
+    let peak = 0, maxDD = 0;
+    eqData.forEach(v => { if (v > peak) peak = v; const dd = peak - v; if (dd > maxDD) maxDD = dd; });
+    const maxDDPct = peak > 0 ? Math.min((maxDD / peak) * 100, 100) : 0;
+    const el = id => document.getElementById(id);
+    if (el('jMaxDDPct')) { el('jMaxDDPct').textContent = maxDDPct.toFixed(1) + '%'; el('jMaxDDPct').style.color = maxDDPct > 20 ? 'var(--bear)' : 'var(--yellow)'; }
+    if (el('jMaxDDAbs')) el('jMaxDDAbs').textContent = '$' + maxDD.toFixed(2) + ' drawdown';
+    if (el('jMaxDDBar')) el('jMaxDDBar').style.width = Math.min(maxDDPct / 30 * 100, 100) + '%';
+
+    // Streaks + last 10
+    let bestWin = 0, worstLoss = 0, curWin = 0, curLoss = 0;
+    const last10 = trades.slice(-10);
+    trades.forEach(t => {
+      if (parseFloat(t.profit) > 0) { curWin++; curLoss = 0; bestWin = Math.max(bestWin, curWin); }
+      else { curLoss++; curWin = 0; worstLoss = Math.max(worstLoss, curLoss); }
+    });
+    if (el('jBestStreak'))  el('jBestStreak').textContent = bestWin;
+    if (el('jWorstStreak')) el('jWorstStreak').textContent = worstLoss;
+    if (el('jLast10')) {
+      el('jLast10').innerHTML = last10.map(t => {
+        const w = parseFloat(t.profit) > 0;
+        return `<div title="${t.symbol} ${jFmt$(t.profit)}" style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;background:${w?'rgba(38,166,154,.15)':'rgba(239,83,80,.15)'};border:1px solid ${w?'rgba(38,166,154,.4)':'rgba(239,83,80,.4)'};">${w?'✅':'❌'}</div>`;
+      }).join('');
+    }
+
+    // ── CHARTS ──────────────────────────────────────────────────────
+    const chartDefaults = {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#484f58', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,.04)' } },
+        y: { ticks: { color: '#484f58', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,.04)' } }
+      }
+    };
+
+    // Equity Curve
+    jChart('jChartEquity', {
+      type: 'line',
+      data: {
+        labels: eqLabels,
+        datasets: [{
+          data: eqData,
+          borderColor: '#26a69a', borderWidth: 2,
+          backgroundColor: ctx => {
+            const g = ctx.chart.ctx.createLinearGradient(0,0,0,160);
+            g.addColorStop(0,'rgba(38,166,154,.25)'); g.addColorStop(1,'rgba(38,166,154,0)'); return g;
+          },
+          fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 4
+        }]
+      },
+      options: { ...chartDefaults }
+    });
+
+    // Daily PnL
+    const dailyMap = {};
+    trades.forEach(t => {
+      if (!t.close_time) return;
+      const day = t.close_time.slice(0,10);
+      dailyMap[day] = (dailyMap[day] || 0) + parseFloat(t.profit ?? 0);
+    });
+    const dailyKeys = Object.keys(dailyMap).sort().slice(-30);
+    jChart('jChartDailyPnl', {
+      type: 'bar',
+      data: {
+        labels: dailyKeys.map(d => d.slice(5)),
+        datasets: [{
+          data: dailyKeys.map(k => parseFloat(dailyMap[k].toFixed(2))),
+          backgroundColor: dailyKeys.map(k => dailyMap[k] >= 0 ? 'rgba(38,166,154,.7)' : 'rgba(239,83,80,.7)'),
+          borderRadius: 3
+        }]
+      },
+      options: { ...chartDefaults }
+    });
+
+    // Rolling Win Rate (window=20)
+    const W = 20;
+    const rollLabels = [], rollData = [];
+    for (let i = W - 1; i < trades.length; i++) {
+      const window = trades.slice(i - W + 1, i + 1);
+      const wins = window.filter(t => parseFloat(t.profit) > 0).length;
+      rollLabels.push(i + 1);
+      rollData.push(parseFloat((wins / W * 100).toFixed(1)));
+    }
+    jChart('jChartWinRate', {
+      type: 'line',
+      data: {
+        labels: rollLabels,
+        datasets: [{
+          data: rollData,
+          borderColor: '#00b8d4', borderWidth: 2,
+          backgroundColor: 'rgba(0,184,212,.1)',
+          fill: true, tension: 0.4, pointRadius: 0
+        }, {
+          data: rollLabels.map(() => 60),
+          borderColor: 'rgba(38,166,154,.3)', borderWidth: 1,
+          borderDash: [4, 4], pointRadius: 0, fill: false
+        }]
+      },
+      options: { ...chartDefaults }
+    });
+
+    // Symbol PnL bar chart
+    const symMap = {};
+    trades.forEach(t => {
+      if (!t.symbol) return;
+      const s = t.symbol.replace(/[.#]/g,'');
+      symMap[s] = (symMap[s] || 0) + parseFloat(t.profit ?? 0);
+    });
+    const symKeys = Object.keys(symMap).sort((a,b) => Math.abs(symMap[b]) - Math.abs(symMap[a])).slice(0, 10);
+    jChart('jChartSymbol', {
+      type: 'bar',
+      data: {
+        labels: symKeys,
+        datasets: [{
+          data: symKeys.map(k => parseFloat(symMap[k].toFixed(2))),
+          backgroundColor: symKeys.map(k => symMap[k] >= 0 ? 'rgba(38,166,154,.7)' : 'rgba(239,83,80,.7)'),
+          borderRadius: 3
+        }]
+      },
+      options: { ...chartDefaults, indexAxis: 'y' }
+    });
+
+    // ── Analysis Tables ────────────────────────────────────────────
+    function buildTable(tbodyId, rows) {
+      const tbody = document.getElementById(tbodyId);
+      if (!tbody) return;
+      if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:#484f58;">No data</td></tr>'; return; }
+      tbody.innerHTML = rows.map(r => {
+        const pc = r.pnl >= 0 ? 'var(--bull)' : 'var(--bear)';
+        return `<tr style="border-bottom:1px solid #161b22;">
+          <td style="padding:7px 8px;color:var(--text2);">${r.label}</td>
+          <td style="padding:7px 8px;text-align:right;color:#8b949e;">${r.count}</td>
+          <td style="padding:7px 8px;text-align:right;color:${r.wr>=50?'var(--bull)':'var(--bear)'};">${r.wr.toFixed(0)}%</td>
+          <td style="padding:7px 8px;text-align:right;color:${pc};font-family:var(--font-mono);">${(r.pnl>=0?'+':'')+'$'+Math.abs(r.pnl).toFixed(2)}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // Symbol table
+    const symRows = symKeys.map(k => {
+      const kTrades = trades.filter(t => (t.symbol||'').replace(/[.#]/g,'') === k);
+      const kWins = kTrades.filter(t => parseFloat(t.profit)>0).length;
+      return { label: k, count: kTrades.length, wr: kWins/kTrades.length*100, pnl: symMap[k] };
+    });
+    buildTable('jSymbolTable', symRows);
+
+    // Day of week table
+    const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const dowMap = {};
+    trades.forEach(t => {
+      if (!t.close_time) return;
+      const d = DAYS[new Date(t.close_time).getDay()];
+      if (!dowMap[d]) dowMap[d] = { count:0, wins:0, pnl:0 };
+      dowMap[d].count++; dowMap[d].pnl += parseFloat(t.profit??0);
+      if (parseFloat(t.profit)>0) dowMap[d].wins++;
+    });
+    const dowRows = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].filter(d=>dowMap[d]).map(d => ({
+      label: d, count: dowMap[d].count, wr: dowMap[d].wins/dowMap[d].count*100, pnl: dowMap[d].pnl
+    }));
+    buildTable('jDowTable', dowRows);
+
+    // Hour table
+    const hourMap = {};
+    trades.forEach(t => {
+      if (!t.open_time) return;
+      const h = String(new Date(t.open_time).getUTCHours()).padStart(2,'0') + ':00';
+      if (!hourMap[h]) hourMap[h] = { count:0, wins:0, pnl:0 };
+      hourMap[h].count++; hourMap[h].pnl += parseFloat(t.profit??0);
+      if (parseFloat(t.profit)>0) hourMap[h].wins++;
+    });
+    const hourRows = Object.keys(hourMap).sort().map(h => ({
+      label: h, count: hourMap[h].count, wr: hourMap[h].wins/hourMap[h].count*100, pnl: hourMap[h].pnl
+    }));
+    buildTable('jHourTable', hourRows);
+
+    // Daily results table (sorted newest first)
+    const dailyRows = dailyKeys.slice().reverse().map(d => {
+      const dTrades = trades.filter(t => (t.close_time||'').startsWith(d));
+      const dWins = dTrades.filter(t => parseFloat(t.profit)>0).length;
+      return { label: d, count: dTrades.length, wr: dWins/dTrades.length*100, pnl: dailyMap[d] };
+    });
+    buildTable('jDailyTable', dailyRows);
+  }
+
+  // ── Trade History Table ────────────────────────────────────────────
   const tbody  = document.getElementById('journalBody');
   const status = document.getElementById('journalStatus');
+  const tradesSorted = [...trades].reverse(); // newest first
 
-  if (!trades || trades.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px 24px;">
+  if (!tradesSorted || tradesSorted.length === 0) {
+    if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px 24px;">
       <div style="font-size:36px;margin-bottom:12px;">📡</div>
       <div style="font-size:15px;font-weight:600;color:#c9d1d9;margin-bottom:8px;">No trades synced yet</div>
       <div style="font-size:13px;color:#484f58;margin-bottom:24px;line-height:1.6;max-width:360px;margin-left:auto;margin-right:auto;">
-        Install the <strong style="color:#c9d1d9;">BYB Sync EA</strong> in your MT5 terminal.<br/>
+        Install the <strong style="color:#c9d1d9;">BYB Sync EA</strong> in your MT5 terminal.<br>
         It will automatically push your trades here every 2 minutes.
       </div>
-      <button onclick="downloadEA()" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#26a69a,#089981);border:none;color:#fff;padding:12px 24px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;letter-spacing:.3px;transition:.2s;box-shadow:0 4px 16px rgba(38,166,154,.3);" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(38,166,154,.4)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 16px rgba(38,166,154,.3)'">
+      <button onclick="downloadEA()" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#26a69a,#089981);border:none;color:#fff;padding:12px 24px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;letter-spacing:.3px;transition:.2s;box-shadow:0 4px 16px rgba(38,166,154,.3);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
         ⬇️ Download BYB_Sync.mq5
       </button>
-      <div style="font-size:11px;color:#30363d;margin-top:12px;">
-        Copy your Sync Token from ⚙️ Profile settings → paste into EA parameters → done
-      </div>
     </td></tr>`;
     if (status) status.textContent = '0 trades';
   } else {
-    if (status) status.textContent = trades.length + ' trades';
-    tbody.innerHTML = trades.map(t => {
-      const pnl = t.profit ?? 0;
-      const dir = (t.type === 'buy' || t.type === 0) ? '<span class="trade-dir long">▲ LONG</span>' : '<span class="trade-dir short">▼ SHORT</span>';
+    if (status) status.textContent = tradesSorted.length + ' trades';
+    if (tbody) tbody.innerHTML = tradesSorted.map(t => {
+      const pnl = parseFloat(t.profit ?? 0);
+      const dir = t.direction === 'buy' ? '<span class="trade-dir long">▲ LONG</span>' : '<span class="trade-dir short">▼ SHORT</span>';
       const pnlClass = pnl >= 0 ? 'trade-pnl pos' : 'trade-pnl neg';
-      const pnlStr = (pnl >= 0 ? '+' : '') + '$' + pnl.toFixed(2);
-      const openTime  = t.open_time  ? new Date(t.open_time).toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'}) : '—';
-      const closeTime = t.close_time ? new Date(t.close_time).toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'}) : 'Open';
+      const pnlStr = (pnl >= 0 ? '+' : '') + '$' + Math.abs(pnl).toFixed(2);
+      const openT  = t.open_time  ? new Date(t.open_time).toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'}) : '—';
+      const closeT = t.close_time ? new Date(t.close_time).toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'}) : '—';
       return `<tr>
         <td><div class="trade-sym">${t.symbol || '—'}</div></td>
         <td>${dir}</td>
-        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${openTime}</td>
-        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${closeTime}</td>
+        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${t.entry ? parseFloat(t.entry).toFixed(5) : '—'}</td>
+        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${t.exit_price ? parseFloat(t.exit_price).toFixed(5) : '—'}</td>
+        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${openT}</td>
+        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${closeT}</td>
         <td style="font-family:var(--font-mono);font-size:12px">${t.volume ?? '—'}</td>
+        <td style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">${jFmtHold(t.hold_secs)}</td>
         <td class="${pnlClass}">${pnlStr}</td>
-        <td style="font-size:11px;color:var(--text3);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.comment || '—'}</td>
       </tr>`;
     }).join('');
   }
@@ -4512,7 +5004,6 @@ async function checkJournalState() {
     return;
   }
 
-  // Logged in — check subscription status
   const { data: profile } = await _supa
     .from('users')
     .select('id, journal_subscription_active')
@@ -4538,30 +5029,38 @@ async function checkJournalState() {
   gateSub.style.display   = 'none';
   content.style.display   = 'block';
 
-  // Load MT5 account for journal
+  // Load all MT5 accounts for switcher
   const { data: accounts } = await _supa
     .from('mt5_accounts')
     .select('*')
     .eq('user_id', profile.id)
     .eq('is_active', true);
 
-  if (accounts && accounts.length > 0) {
-    loadAlphaJournal(profile.id, accounts[0]);
+  _jAllAccounts = accounts || [];
+
+  if (_jAllAccounts.length > 0) {
+    // Populate dropdown
+    const sel = document.getElementById('jAccountSelect');
+    if (sel) {
+      sel.innerHTML = _jAllAccounts.map(a =>
+        `<option value="${a.id}">${a.label || a.mt5_server || 'Account ' + a.id}</option>`
+      ).join('');
+    }
+    loadAlphaJournal(profile.id, _jAllAccounts[0]);
   } else {
-    const tbody  = document.getElementById('journalBody');
-    const status = document.getElementById('journalStatus');
-    if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#484f58;">
+    const tbody = document.getElementById('journalBody');
+    if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:#484f58;">
       <div style="font-size:36px;margin-bottom:12px;">📡</div>
       <div style="font-size:15px;font-weight:600;color:#c9d1d9;margin-bottom:8px;">No MT5 account connected</div>
-      <div style="font-size:13px;color:#484f58;margin-bottom:20px;">Go to Dashboard → add your MT5 account first.</div>
+      <div style="font-size:13px;color:#484f58;margin-bottom:20px;">Go to Bot Performance → add your MT5 account first.</div>
       <button onclick="showPage('dashboard')" style="background:linear-gradient(135deg,#26a69a,#089981);border:none;color:#fff;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;">Go to Dashboard</button>
     </td></tr>`;
-    if (status) status.textContent = 'No account';
+    const sel = document.getElementById('jAccountSelect');
+    if (sel) sel.innerHTML = '<option value="">No accounts connected</option>';
   }
 }
 
 function subscribeJournal() {
-  // TODO: Replace with real Stripe Payment Link once connected
   const paymentLink = 'https://buy.stripe.com/PLACEHOLDER';
   window.open(paymentLink, '_blank');
 }
