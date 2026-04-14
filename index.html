@@ -4495,14 +4495,17 @@ async function updateNavForUser(user) {
 
 // showPage override handled in new JS block below
 
-// ── On page load: restore session ──
+// ── On page load: restore session + prime the user cache ──
 _supa.auth.getSession().then(( { data: { session } } ) => {
-  if (session?.user) updateNavForUser(session.user);
+  _cachedUser = session?.user || null;
+  if (_cachedUser) updateNavForUser(_cachedUser);
 });
 
-// ── Listen for auth state changes ──
+// ── Listen for auth state changes — cache user for synchronous access ──
+let _cachedUser = null;
 _supa.auth.onAuthStateChange((event, session) => {
-  updateNavForUser(session?.user || null);
+  _cachedUser = session?.user || null;
+  updateNavForUser(_cachedUser);
 });
 
 
@@ -5287,10 +5290,11 @@ const STRIPE_LINKS = {
   forge_once:       'https://buy.stripe.com/test_aFabJ28Jt1QJbkD1budby0b',
 };
 
-async function buyProduct(linkKey) {
-  const { data: { user } } = await _supa.auth.getUser();
+function buyProduct(linkKey) {
+  // Use cached user — avoids await which breaks browser popup permission
+  const user = _cachedUser;
+
   if (!user) {
-    // Not logged in — show login modal with a note
     openAuthModal('login');
     setTimeout(() => {
       const sub = document.getElementById('authSubtitle');
@@ -5298,10 +5302,17 @@ async function buyProduct(linkKey) {
     }, 80);
     return;
   }
+
   const base = STRIPE_LINKS[linkKey];
   if (!base) return;
+
+  // Open Stripe directly in same tab if popup blocked; prefill email
   const url = base + '?prefilled_email=' + encodeURIComponent(user.email);
-  window.open(url, '_blank');
+  const popup = window.open(url, '_blank');
+  // Fallback: if browser blocked popup, navigate in current tab
+  if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+    window.location.href = url;
+  }
 }
 
 function subscribeJournal() {
