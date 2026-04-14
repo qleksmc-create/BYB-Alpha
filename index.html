@@ -1421,6 +1421,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <div class="auth-modal">
     <button class="auth-modal-close" onclick="closeAuthModal()">✕</button>
     <div class="auth-modal-logo"><span>BYB ALPHA</span></div>
+    <div id="authSubtitle" style="display:none;font-size:13px;color:var(--teal);text-align:center;margin:-8px 0 12px;padding:8px 12px;background:rgba(38,166,154,.08);border-radius:8px;border:1px solid rgba(38,166,154,.2);"></div>
     <div class="auth-tabs">
       <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Login</button>
       <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Register</button>
@@ -1637,7 +1638,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
           </div>
           <div class="hero-btns reveal reveal-d4">
             <button class="btn btn-primary btn-lg" onclick="showPage('dashboard')">📊 View Live Dashboard</button>
-            <button class="btn btn-ghost btn-lg" onclick="showPage('contact')">Commission a Custom Bot</button>
+            <button class="btn btn-ghost btn-lg" onclick="buyProduct('forge_once')">Commission a Custom Bot</button>
           </div>
         </div>
         <!-- Logo and floating badges -->
@@ -1774,7 +1775,8 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
             <div class="pf"><div class="pf-x">—</div><span style="color:var(--text3)">Telegram alerts</span></div>
             <div class="pf"><div class="pf-x">—</div><span style="color:var(--text3)">Prop firm safe mode</span></div>
           </div>
-          <button class="pricing-cta pricing-cta-ghost" onclick="showPage('contact')">Get Lite →</button>
+          <button class="pricing-cta pricing-cta-ghost" onclick="buyProduct('lite_once')">Buy Lite — £79 →</button>
+          <button style="width:100%;margin-top:8px;padding:9px;border-radius:6px;font-size:12px;font-weight:600;background:none;border:1px solid #21262d;color:#484f58;cursor:pointer;transition:.18s;" onmouseover="this.style.color='var(--teal)';this.style.borderColor='var(--teal)'" onmouseout="this.style.color='#484f58';this.style.borderColor='#21262d'" onclick="buyProduct('lite_monthly')">or £9/month →</button>
         </div>
         <!-- Pro -->
         <div class="pricing-card featured reveal reveal-d2">
@@ -1792,7 +1794,8 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
             <div class="pf"><div class="pf-check">✓</div>Free strategy updates</div>
             <div class="pf"><div class="pf-x">—</div><span style="color:var(--text3)">AI-assisted entries</span></div>
           </div>
-          <button class="pricing-cta pricing-cta-primary" onclick="showPage('contact')">Get Pro — Best Value →</button>
+          <button class="pricing-cta pricing-cta-primary" onclick="buyProduct('pro_once')">Buy Pro — £149 →</button>
+          <button style="width:100%;margin-top:8px;padding:9px;border-radius:6px;font-size:12px;font-weight:600;background:none;border:1px solid rgba(38,166,154,.3);color:rgba(38,166,154,.7);cursor:pointer;transition:.18s;" onmouseover="this.style.color='var(--teal)';this.style.borderColor='var(--teal)'" onmouseout="this.style.color='rgba(38,166,154,.7)';this.style.borderColor='rgba(38,166,154,.3)'" onclick="buyProduct('pro_monthly')">or £19/month →</button>
         </div>
         <!-- Apex -->
         <div class="pricing-card reveal reveal-d4">
@@ -1810,11 +1813,12 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
             <div class="pf"><div class="pf-check">✓</div>Priority support &amp; early access</div>
             <div class="pf"><div class="pf-check">✓</div>AlphaForge 20% discount</div>
           </div>
-          <button class="pricing-cta pricing-cta-ghost" onclick="showPage('contact')">Get Apex →</button>
+          <button class="pricing-cta pricing-cta-ghost" onclick="buyProduct('apex_once')">Buy Apex — £299 →</button>
+          <button style="width:100%;margin-top:8px;padding:9px;border-radius:6px;font-size:12px;font-weight:600;background:none;border:1px solid #21262d;color:#484f58;cursor:pointer;transition:.18s;" onmouseover="this.style.color='var(--teal)';this.style.borderColor='var(--teal)'" onmouseout="this.style.color='#484f58';this.style.borderColor='#21262d'" onclick="buyProduct('apex_monthly')">or £29/month →</button>
         </div>
       </div>
       <div style="text-align:center;margin-top:24px">
-        <p style="font-size:13px;color:var(--text3)">Need something bespoke? <button style="background:none;border:none;color:var(--teal);font-size:13px;cursor:pointer;font-family:var(--font-sans)" onclick="showPage('contact')">Commission a custom bot via AlphaForge →</button></p>
+        <p style="font-size:13px;color:var(--text3)">Need something bespoke? <button style="background:none;border:none;color:var(--teal);font-size:13px;cursor:pointer;font-family:var(--font-sans)" onclick="buyProduct('forge_once')">Commission a custom bot via AlphaForge — £299 →</button></p>
       </div>
 
       <!-- COMPARISON TABLE -->
@@ -2178,7 +2182,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         <h2>READY TO <span class="teal">AUTOMATE</span>?</h2>
         <p>Join 4,218 traders already running BYB Alpha bots. Deploy today, profit tonight.</p>
         <div class="cta-btns">
-          <button id="cta-btn1" class="btn btn-primary btn-lg" onclick="showPage('contact')">🚀 Get Your Bot Now</button>
+          <button id="cta-btn1" class="btn btn-primary btn-lg" onclick="buyProduct('pro_once')">🚀 Get Your Bot Now</button>
           <button id="cta-btn2" class="btn btn-ghost btn-lg" onclick="toggleChatPopup()">💬 Chat with Forge AI</button>
         </div>
       </div>
@@ -3513,10 +3517,11 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
         <div>
           <div class="footer-col-title" id="fc-products">PRODUCTS</div>
           <div class="footer-links-list">
-            <button onclick="showPage('contact')">Unwicked Lite — £79</button>
-            <button onclick="showPage('contact')">Unwicked EA Pro — £149</button>
-            <button onclick="showPage('contact')">Forge Apex — £299</button>
-            <button onclick="showPage('contact')">AlphaForge Custom</button>
+            <button onclick="buyProduct('lite_once')">Unwicked Lite — £79</button>
+            <button onclick="buyProduct('pro_once')">Unwicked EA Pro — £149</button>
+            <button onclick="buyProduct('apex_once')">Forge Apex — £299</button>
+            <button onclick="buyProduct('forge_once')">AlphaForge Custom — £299</button>
+            <button onclick="buyProduct('journal_monthly')">AlphaJournal — £29/mo</button>
           </div>
         </div>
 
@@ -4343,6 +4348,8 @@ function openAuthModal(tab = 'login') {
 function closeAuthModal() {
   document.getElementById('authOverlay').classList.remove('open');
   clearAuthMsgs();
+  const sub = document.getElementById('authSubtitle');
+  if (sub) sub.style.display = 'none';
 }
 document.getElementById('authOverlay').addEventListener('click', function(e) {
   if (e.target === this) closeAuthModal();
@@ -5156,9 +5163,43 @@ async function checkJournalState() {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// STRIPE PAYMENT — LOGIN GATE + EMAIL PREFILL
+// ─────────────────────────────────────────────────────────────────────────────
+const STRIPE_LINKS = {
+  // Journal
+  journal_monthly:  'https://buy.stripe.com/test_5kQ3cw5xhgLDbkDf2kdby04',
+  // Bots — one-time
+  lite_once:        'https://buy.stripe.com/test_14AcN6gbV8f7dsL5rKdby05',
+  pro_once:         'https://buy.stripe.com/test_bJe8wQ4tdeDv4WfaM4dby07',
+  apex_once:        'https://buy.stripe.com/test_eVq14ocZJ9jb60j1budby09',
+  // Bots — monthly
+  lite_monthly:     'https://buy.stripe.com/test_6oU6oI3p9brj4Wf9I0dby06',
+  pro_monthly:      'https://buy.stripe.com/test_14AaEYcZJ66Z88rcUcdby08',
+  apex_monthly:     'https://buy.stripe.com/test_5kQcN62l5fHz2O7g6odby0a',
+  // AlphaForge custom dev
+  forge_once:       'https://buy.stripe.com/test_aFabJ28Jt1QJbkD1budby0b',
+};
+
+async function buyProduct(linkKey) {
+  const { data: { user } } = await _supa.auth.getUser();
+  if (!user) {
+    // Not logged in — show login modal with a note
+    openAuthModal('login');
+    setTimeout(() => {
+      const sub = document.getElementById('authSubtitle');
+      if (sub) { sub.textContent = '🔒 Bitte einloggen oder registrieren um zu kaufen.'; sub.style.display = 'block'; }
+    }, 80);
+    return;
+  }
+  const base = STRIPE_LINKS[linkKey];
+  if (!base) return;
+  const url = base + '?prefilled_email=' + encodeURIComponent(user.email);
+  window.open(url, '_blank');
+}
+
 function subscribeJournal() {
-  const paymentLink = 'https://buy.stripe.com/PLACEHOLDER';
-  window.open(paymentLink, '_blank');
+  buyProduct('journal_monthly');
 }
 
 
