@@ -2431,22 +2431,31 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
       </div>
 
       <!-- ── Account Overview ──────────────────────────────────────── -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;">
-        <div class="card" style="padding:16px 18px;border-color:rgba(239,83,80,.2);">
-          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">MAX DRAWDOWN</div>
-          <div id="jBalance" style="font-size:22px;font-weight:800;color:var(--bear);font-family:var(--font-mono);">—</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:20px;">
+        <div class="card" style="padding:16px 18px;border-color:rgba(38,166,154,.3);">
+          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">KONTOSTAND</div>
+          <div id="jBalance" style="font-size:22px;font-weight:800;color:var(--teal);font-family:var(--font-mono);">—</div>
+          <div style="font-size:10px;color:#484f58;margin-top:3px;">Balance</div>
+        </div>
+        <div class="card" style="padding:16px 18px;border-color:rgba(31,111,235,.25);">
+          <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">EQUITY</div>
+          <div id="jEquity" style="font-size:22px;font-weight:800;color:#58a6ff;font-family:var(--font-mono);">—</div>
+          <div style="font-size:10px;color:#484f58;margin-top:3px;">Offene Positionen inkl.</div>
         </div>
         <div class="card" style="padding:16px 18px;border-color:rgba(38,166,154,.2);">
           <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">TOTAL P&amp;L</div>
           <div id="jTotalPnl" style="font-size:22px;font-weight:800;color:var(--bull);font-family:var(--font-mono);">—</div>
+          <div style="font-size:10px;color:#484f58;margin-top:3px;">Realisierter Gewinn/Verlust</div>
         </div>
         <div class="card" style="padding:16px 18px;">
           <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">WIN RATE</div>
           <div id="jWinRate" style="font-size:22px;font-weight:800;color:var(--bull);font-family:var(--font-mono);">—</div>
+          <div style="font-size:10px;color:#484f58;margin-top:3px;">Gewinnquote</div>
         </div>
         <div class="card" style="padding:16px 18px;">
           <div style="font-size:10px;letter-spacing:1.5px;color:#484f58;font-weight:700;margin-bottom:6px;">PROFIT FACTOR</div>
           <div id="jProfitFactor" style="font-size:22px;font-weight:800;color:var(--text1);font-family:var(--font-mono);">—</div>
+          <div style="font-size:10px;color:#484f58;margin-top:3px;">Ziel: &gt; 1.5</div>
         </div>
       </div>
 
@@ -4699,6 +4708,25 @@ async function loadAlphaJournal(userId, activeAccount) {
     ).join('');
   }
 
+  // ── Balance & Equity from the account record (synced by EA) ──────
+  {
+    const el = id => document.getElementById(id);
+    const fmtAcc = v => v != null ? '$' + parseFloat(v).toLocaleString('de-AT', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
+    if (el('jBalance')) el('jBalance').textContent = fmtAcc(activeAccount.balance);
+    if (el('jEquity'))  {
+      el('jEquity').textContent = fmtAcc(activeAccount.equity);
+      if (activeAccount.equity != null && activeAccount.balance != null) {
+        const diff = parseFloat(activeAccount.equity) - parseFloat(activeAccount.balance);
+        el('jEquity').style.color = diff >= 0 ? '#58a6ff' : 'var(--bear)';
+      }
+    }
+    // Last sync from account
+    const jLastSync = document.getElementById('jLastSync');
+    if (jLastSync && activeAccount.last_sync_at) {
+      jLastSync.textContent = new Date(activeAccount.last_sync_at).toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'});
+    }
+  }
+
   // ── Query summary view filtered by mt5_account_id ─────────────────
   const { data: summary, error: sumErr } = await _supa
     .from('user_journal_dashboard')
@@ -4734,7 +4762,7 @@ async function loadAlphaJournal(userId, activeAccount) {
 
     const el = id => document.getElementById(id);
     if (el('jTotalPnl'))     { el('jTotalPnl').textContent = jFmt$(pnl); el('jTotalPnl').style.color = jPnlColor(pnl); }
-    // jBalance is now used for Max DD — filled later after equity curve calc
+    // Balance & Equity come from activeAccount (synced by EA) — filled below
     if (el('jWinRate'))      { el('jWinRate').textContent = wr.toFixed(1) + '%'; el('jWinRate').style.color = wr >= 50 ? 'var(--bull)' : 'var(--bear)'; }
     if (el('jProfitFactor')) { el('jProfitFactor').textContent = pf > 0 ? pf.toFixed(2) : '—'; el('jProfitFactor').style.color = pf >= 1 ? 'var(--bull)' : 'var(--bear)'; }
     if (el('jExpectancy'))   { el('jExpectancy').textContent = jFmt$(summary.expectancy); el('jExpectancy').style.color = jPnlColor(summary.expectancy); }
@@ -4772,8 +4800,7 @@ async function loadAlphaJournal(userId, activeAccount) {
     eqData.forEach(v => { if (v > peak) peak = v; const dd = peak - v; if (dd > maxDD) maxDD = dd; });
     const maxDDPct = peak > 0 ? Math.min((maxDD / peak) * 100, 100) : 0;
     const el = id => document.getElementById(id);
-    // Fill the top-left "MAX DRAWDOWN" card
-    if (el('jBalance'))  { el('jBalance').textContent = '-$' + maxDD.toFixed(2); }
+    // jBalance is now KONTOSTAND (from account) — don't overwrite it here
     if (el('jMaxDDPct')) { el('jMaxDDPct').textContent = maxDDPct.toFixed(1) + '%'; el('jMaxDDPct').style.color = maxDDPct > 20 ? 'var(--bear)' : 'var(--yellow)'; }
     if (el('jMaxDDAbs')) el('jMaxDDAbs').textContent = '-$' + maxDD.toFixed(2) + ' peak-to-trough';
     if (el('jMaxDDBar')) el('jMaxDDBar').style.width = Math.min(maxDDPct / 30 * 100, 100) + '%';
@@ -5098,10 +5125,10 @@ async function checkJournalState() {
   gateSub.style.display   = 'none';
   content.style.display   = 'block';
 
-  // Load all MT5 accounts for switcher
+  // Load all MT5 accounts for switcher (include balance/equity columns)
   const { data: accounts } = await _supa
     .from('mt5_accounts')
-    .select('*')
+    .select('id, label, mt5_login, mt5_server, balance, equity, margin, free_margin, last_sync_at')
     .eq('user_id', profile.id)
     .eq('is_active', true);
 
