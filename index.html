@@ -3273,140 +3273,102 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
   <section class="section">
     <div class="container">
       <div class="section-header reveal">
-        <div class="eyebrow" id="ew-cal">TRADING CALENDAR</div>
+        <div class="eyebrow" id="ew-cal">LIVE DATA · FOREXFACTORY</div>
         <div class="section-title" id="st-cal">ECONOMIC <span class="teal">CALENDAR</span></div>
-        <p class="section-sub" id="ss-cal">Monitor high-impact economic events that affect FX markets. Plan your trades around major releases.</p>
+        <p class="section-sub" id="ss-cal">Live economic events from ForexFactory — automatically updated. This week &amp; next week.</p>
       </div>
 
-      <!-- Calendar Info Cards -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px">
-        <div class="card card-glow reveal">
-          <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--teal);margin-bottom:12px;text-transform:uppercase">Today's Events</div>
-          <div style="font-size:32px;font-weight:700;color:var(--white);margin-bottom:8px" id="todayEvents">3</div>
-          <div style="font-size:12px;color:var(--text3)">High impact events scheduled</div>
+      <!-- KPI Cards -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px">
+        <div class="card card-glow">
+          <div style="font-size:10px;letter-spacing:2px;color:var(--bear);margin-bottom:10px;font-weight:700;text-transform:uppercase">🔴 Today High Impact</div>
+          <div style="font-size:36px;font-weight:800;color:var(--white);font-family:var(--font-mono)" id="calTodayHigh">—</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">events today</div>
         </div>
-        <div class="card card-glow reveal reveal-d1">
-          <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--blue);margin-bottom:12px;text-transform:uppercase">This Week</div>
-          <div style="font-size:32px;font-weight:700;color:var(--white);margin-bottom:8px" id="weekEvents">12</div>
-          <div style="font-size:12px;color:var(--text3)">Important releases coming</div>
+        <div class="card card-glow">
+          <div style="font-size:10px;letter-spacing:2px;color:var(--yellow);margin-bottom:10px;font-weight:700;text-transform:uppercase">⚡ This Week High</div>
+          <div style="font-size:36px;font-weight:800;color:var(--white);font-family:var(--font-mono)" id="calWeekHigh">—</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">high-impact this week</div>
         </div>
-        <div class="card card-glow reveal reveal-d2">
-          <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--yellow);margin-bottom:12px;text-transform:uppercase">This Month</div>
-          <div style="font-size:32px;font-weight:700;color:var(--white);margin-bottom:8px" id="monthEvents">47</div>
-          <div style="font-size:12px;color:var(--text3)">Total monthly releases</div>
+        <div class="card card-glow">
+          <div style="font-size:10px;letter-spacing:2px;color:var(--teal);margin-bottom:10px;font-weight:700;text-transform:uppercase">📅 Total Events</div>
+          <div style="font-size:36px;font-weight:800;color:var(--white);font-family:var(--font-mono)" id="calTotal">—</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">this &amp; next week</div>
         </div>
-        <div class="card card-glow reveal reveal-d3">
-          <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--bull);margin-bottom:12px;text-transform:uppercase">Next FOMC</div>
-          <div style="font-size:32px;font-weight:700;color:var(--white);margin-bottom:8px">18 days</div>
-          <div style="font-size:12px;color:var(--text3)">Federal Reserve decision</div>
+        <div class="card card-glow" style="border-color:rgba(248,81,73,.25);">
+          <div style="font-size:10px;letter-spacing:2px;color:var(--bear);margin-bottom:10px;font-weight:700;text-transform:uppercase">⏱ Next High Event</div>
+          <div style="font-size:14px;font-weight:700;color:var(--white);font-family:var(--font-mono);line-height:1.3" id="calNextName">—</div>
+          <div style="font-size:11px;color:var(--teal);margin-top:6px;font-family:var(--font-mono)" id="calNextTime">Loading…</div>
         </div>
       </div>
 
-      <!-- Calendar Section -->
-      <div class="card card-glow reveal" style="padding:32px;margin-bottom:32px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:16px">
-          <div>
-            <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--teal);margin-bottom:8px;text-transform:uppercase">Professional Calendar</div>
-            <h3 style="font-size:20px;font-weight:700;color:var(--white);margin:0">Upcoming Economic Events</h3>
-          </div>
-          <a href="./calender.html" class="btn btn-primary">📅 Full Calendar View →</a>
+      <!-- Filters -->
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+        <div style="font-size:11px;color:#484f58;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-right:4px;">IMPACT:</div>
+        <button onclick="calFilter('all',this)"   id="calF-all"    style="padding:6px 14px;border-radius:6px;border:1px solid var(--teal);background:rgba(38,166,154,.15);color:var(--teal);font-size:12px;font-weight:700;cursor:pointer;">All</button>
+        <button onclick="calFilter('High',this)"  id="calF-High"   style="padding:6px 14px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#8b949e;font-size:12px;font-weight:600;cursor:pointer;">🔴 High</button>
+        <button onclick="calFilter('Medium',this)"id="calF-Medium" style="padding:6px 14px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#8b949e;font-size:12px;font-weight:600;cursor:pointer;">🟡 Medium</button>
+        <button onclick="calFilter('Low',this)"   id="calF-Low"    style="padding:6px 14px;border-radius:6px;border:1px solid #30363d;background:transparent;color:#8b949e;font-size:12px;font-weight:600;cursor:pointer;">🟢 Low</button>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;color:#484f58;" id="calFetchedAt">Loading live data…</span>
+          <button onclick="loadCalendar(true)" style="background:rgba(38,166,154,.1);border:1px solid rgba(38,166,154,.3);color:var(--teal);padding:6px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">⟳ Refresh</button>
         </div>
-        <div style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse;font-size:13px">
+      </div>
+
+      <!-- Main Calendar Table -->
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:24px;">
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
             <thead>
-              <tr style="border-bottom:2px solid var(--border)">
-                <th style="padding:12px;text-align:left;font-family:var(--font-mono);font-size:10px;letter-spacing:1px;color:var(--text3);font-weight:600">DATE</th>
-                <th style="padding:12px;text-align:left;font-family:var(--font-mono);font-size:10px;letter-spacing:1px;color:var(--text3);font-weight:600">EVENT</th>
-                <th style="padding:12px;text-align:left;font-family:var(--font-mono);font-size:10px;letter-spacing:1px;color:var(--text3);font-weight:600">COUNTRY</th>
-                <th style="padding:12px;text-align:center;font-family:var(--font-mono);font-size:10px;letter-spacing:1px;color:var(--text3);font-weight:600">IMPACT</th>
-                <th style="padding:12px;text-align:right;font-family:var(--font-mono);font-size:10px;letter-spacing:1px;color:var(--text3);font-weight:600">TIME (GMT)</th>
+              <tr style="background:#161b22;border-bottom:1px solid #21262d;">
+                <th style="padding:12px 16px;text-align:left;font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;">TIME (LOCAL)</th>
+                <th style="padding:12px 8px;text-align:left;font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;">CCY</th>
+                <th style="padding:12px 16px;text-align:left;font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;">EVENT</th>
+                <th style="padding:12px 8px;text-align:center;font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;">IMPACT</th>
+                <th style="padding:12px 16px;text-align:right;font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;">FORECAST</th>
+                <th style="padding:12px 16px;text-align:right;font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;">PREVIOUS</th>
+                <th style="padding:12px 16px;text-align:right;font-size:9px;letter-spacing:1.5px;color:#484f58;font-weight:700;">ACTUAL</th>
               </tr>
             </thead>
-            <tbody>
-              <tr style="border-bottom:1px solid var(--border);transition:background .15s">
-                <td style="padding:14px 12px;color:var(--text)">Dec 19, 2024</td>
-                <td style="padding:14px 12px;color:var(--white);font-weight:600">Federal Funds Rate Decision</td>
-                <td style="padding:14px 12px;color:var(--text2)">🇺🇸 USA</td>
-                <td style="padding:14px 12px;text-align:center"><span style="background:rgba(248,81,73,.15);color:var(--bear);padding:4px 10px;border-radius:4px;font-size:10px;font-weight:700">HIGH</span></td>
-                <td style="padding:14px 12px;text-align:right;font-family:var(--font-mono);color:var(--teal)">19:00</td>
-              </tr>
-              <tr style="border-bottom:1px solid var(--border);transition:background .15s">
-                <td style="padding:14px 12px;color:var(--text)">Dec 20, 2024</td>
-                <td style="padding:14px 12px;color:var(--white);font-weight:600">Initial Jobless Claims</td>
-                <td style="padding:14px 12px;color:var(--text2)">🇺🇸 USA</td>
-                <td style="padding:14px 12px;text-align:center"><span style="background:rgba(227,179,65,.15);color:var(--yellow);padding:4px 10px;border-radius:4px;font-size:10px;font-weight:700">MEDIUM</span></td>
-                <td style="padding:14px 12px;text-align:right;font-family:var(--font-mono);color:var(--teal)">13:30</td>
-              </tr>
-              <tr style="border-bottom:1px solid var(--border);transition:background .15s">
-                <td style="padding:14px 12px;color:var(--text)">Dec 20, 2024</td>
-                <td style="padding:14px 12px;color:var(--white);font-weight:600">CPI Year-on-Year (Final)</td>
-                <td style="padding:14px 12px;color:var(--text2)">🇬🇧 UK</td>
-                <td style="padding:14px 12px;text-align:center"><span style="background:rgba(248,81,73,.15);color:var(--bear);padding:4px 10px;border-radius:4px;font-size:10px;font-weight:700">HIGH</span></td>
-                <td style="padding:14px 12px;text-align:right;font-family:var(--font-mono);color:var(--teal)">09:00</td>
-              </tr>
-              <tr style="border-bottom:1px solid var(--border);transition:background .15s">
-                <td style="padding:14px 12px;color:var(--text)">Dec 21, 2024</td>
-                <td style="padding:14px 12px;color:var(--white);font-weight:600">Core Inflation Rate YoY</td>
-                <td style="padding:14px 12px;color:var(--text2)">🇪🇺 Eurozone</td>
-                <td style="padding:14px 12px;text-align:center"><span style="background:rgba(227,179,65,.15);color:var(--yellow);padding:4px 10px;border-radius:4px;font-size:10px;font-weight:700">MEDIUM</span></td>
-                <td style="padding:14px 12px;text-align:right;font-family:var(--font-mono);color:var(--teal)">10:00</td>
-              </tr>
-              <tr style="transition:background .15s">
-                <td style="padding:14px 12px;color:var(--text)">Dec 25, 2024</td>
-                <td style="padding:14px 12px;color:var(--white);font-weight:600">Christmas Holiday</td>
-                <td style="padding:14px 12px;color:var(--text2)">🌍 Global</td>
-                <td style="padding:14px 12px;text-align:center"><span style="background:rgba(255,255,255,.08);color:var(--text3);padding:4px 10px;border-radius:4px;font-size:10px;font-weight:700">CLOSED</span></td>
-                <td style="padding:14px 12px;text-align:right;font-family:var(--font-mono);color:var(--text3)">—</td>
-              </tr>
+            <tbody id="calBody">
+              <tr><td colspan="7" style="text-align:center;padding:48px;color:#484f58;">
+                <div style="font-size:28px;margin-bottom:12px;">📡</div>
+                <div style="font-size:14px;font-weight:600;color:#8b949e;">Loading live data from ForexFactory…</div>
+              </td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Legend -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-        <div class="card" style="padding:22px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-            <span style="background:rgba(248,81,73,.15);color:#fff;width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">H</span>
-            <div>
-              <div style="font-weight:600;color:var(--white);font-size:14px">High Impact</div>
-              <div style="font-size:12px;color:var(--text3);margin-top:2px">Major volatility expected</div>
-            </div>
+      <!-- FinancialJuice Live News Feed -->
+      <div class="card" style="padding:20px;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div style="font-size:10px;letter-spacing:2px;color:var(--teal);font-weight:700;margin-bottom:4px;">LIVE · FINANCIALJUICE</div>
+            <div style="font-size:16px;font-weight:700;color:var(--white);">📰 Live Market News</div>
           </div>
+          <a href="https://www.financialjuice.com" target="_blank" rel="noopener" style="font-size:11px;color:#484f58;text-decoration:none;transition:.2s;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='#484f58'">financialjuice.com ↗</a>
         </div>
-        <div class="card" style="padding:22px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-            <span style="background:rgba(227,179,65,.15);color:#fff;width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">M</span>
-            <div>
-              <div style="font-weight:600;color:var(--white);font-size:14px">Medium Impact</div>
-              <div style="font-size:12px;color:var(--text3);margin-top:2px">Moderate volatility expected</div>
-            </div>
-          </div>
-        </div>
-        <div class="card" style="padding:22px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-            <span style="background:rgba(38,166,154,.15);color:#fff;width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">L</span>
-            <div>
-              <div style="font-weight:600;color:var(--white);font-size:14px">Low Impact</div>
-              <div style="font-size:12px;color:var(--text3);margin-top:2px">Minor volatility expected</div>
-            </div>
-          </div>
-        </div>
+        <iframe
+          src="https://www.financialjuice.com/widgets/news-widget?skin=dark&lang=EN&source=all"
+          style="width:100%;height:420px;border:none;border-radius:8px;background:#0d1117;"
+          loading="lazy"
+          title="FinancialJuice Live News"
+        ></iframe>
       </div>
 
-      <!-- CTA -->
-      <div class="cta-banner" style="margin-top:56px">
-        <div class="container">
-          <div class="reveal">
-            <div class="eyebrow" style="justify-content:center">VIEW FULL CALENDAR</div>
-            <h2 style="margin-bottom:16px">FULL TRADING <span class="teal">CALENDAR</span></h2>
-            <p style="margin-bottom:32px">Access the complete AlphaCalendar with real-time updates, session status, and upcoming events.</p>
-            <div class="cta-btns">
-              <a href="./calender.html" class="btn btn-primary btn-lg">📅 Open AlphaCalendar →</a>
-              <button id="cal-btn2" class="btn btn-ghost btn-lg" onclick="showPage('contact')">Get Trading Alerts</button>
-            </div>
-          </div>
+      <!-- Legend -->
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--bear);"></span>High Impact
         </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--yellow);"></span>Medium Impact
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--teal);"></span>Low Impact
+        </div>
+        <div style="margin-left:auto;font-size:11px;color:#484f58;">Source: ForexFactory via BYB Alpha proxy · Auto-refreshes every 10 min</div>
       </div>
     </div>
   </section>
@@ -3573,6 +3535,7 @@ function showPage(id) {
   }, 50);
   if (id === 'dashboard') { setTimeout(drawDashCharts, 100); setTimeout(checkDashboardState, 50); }
   if (id === 'journal')   setTimeout(checkJournalState, 50);
+  if (id === 'calendar')  setTimeout(() => loadCalendar(false), 50);
   if (id === 'home')      setTimeout(drawHeroChart, 100);
 }
 
@@ -5161,6 +5124,149 @@ async function checkJournalState() {
     const sel = document.getElementById('jAccountSelect');
     if (sel) sel.innerHTML = '<option value="">No accounts connected</option>';
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ECONOMIC CALENDAR — ForexFactory + FinancialJuice
+// ─────────────────────────────────────────────────────────────────────────────
+const CAL_API = 'https://dzlgudlurijmgjwetztf.supabase.co/functions/v1/get-calendar';
+const CAL_FLAGS = {
+  USD:'🇺🇸', EUR:'🇪🇺', GBP:'🇬🇧', JPY:'🇯🇵', AUD:'🇦🇺',
+  CAD:'🇨🇦', CHF:'🇨🇭', NZD:'🇳🇿', CNY:'🇨🇳', SGD:'🇸🇬',
+  HKD:'🇭🇰', MXN:'🇲🇽', NOK:'🇳🇴', SEK:'🇸🇪', ALL:'🌍'
+};
+let _calEvents = [];
+let _calFilter = 'all';
+let _calLoaded = false;
+
+async function loadCalendar(force = false) {
+  if (_calLoaded && !force) return;
+  const tbody = document.getElementById('calBody');
+  if (!tbody) return;
+
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:48px;color:#484f58;">
+    <div style="font-size:28px;margin-bottom:12px;animation:pulse 1.5s infinite;">📡</div>
+    <div style="font-size:14px;font-weight:600;color:#8b949e;">Loading live data from ForexFactory…</div>
+  </td></tr>`;
+
+  try {
+    const res = await fetch(CAL_API);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+
+    _calEvents = json.events || [];
+    _calLoaded = true;
+
+    // Update KPI cards
+    const el = id => document.getElementById(id);
+    if (el('calTodayHigh'))  el('calTodayHigh').textContent  = json.meta?.today_high ?? '0';
+    if (el('calWeekHigh'))   el('calWeekHigh').textContent   = json.meta?.week_high  ?? '0';
+    if (el('calTotal'))      el('calTotal').textContent      = json.meta?.total      ?? '0';
+
+    // Next high event
+    const nh = json.meta?.next_high;
+    if (nh && el('calNextName')) {
+      el('calNextName').textContent = nh.title || '—';
+      const d = new Date(nh.date);
+      el('calNextTime').textContent = d.toLocaleDateString('de-AT',{weekday:'short',day:'numeric',month:'short'})
+        + ' · ' + d.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
+    }
+
+    // Fetched at timestamp
+    if (el('calFetchedAt') && json.meta?.fetched_at) {
+      const ft = new Date(json.meta.fetched_at);
+      el('calFetchedAt').textContent = 'Updated ' + ft.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
+    }
+
+    calRender();
+  } catch(e) {
+    console.error('[Calendar]', e);
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:48px;color:#484f58;">
+      <div style="font-size:28px;margin-bottom:12px;">⚠️</div>
+      <div style="font-size:14px;font-weight:600;color:#8b949e;">Could not load calendar data.</div>
+      <div style="font-size:12px;margin-top:8px;">Check your connection or <button onclick="loadCalendar(true)" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:12px;">try again</button></div>
+    </td></tr>`;
+  }
+}
+
+function calFilter(impact, btn) {
+  _calFilter = impact;
+  // Update button styles
+  ['all','High','Medium','Low'].forEach(k => {
+    const b = document.getElementById('calF-' + k);
+    if (!b) return;
+    const active = k === impact;
+    b.style.border   = active ? '1px solid var(--teal)' : '1px solid #30363d';
+    b.style.background = active ? 'rgba(38,166,154,.15)' : 'transparent';
+    b.style.color    = active ? 'var(--teal)' : '#8b949e';
+  });
+  calRender();
+}
+
+function calRender() {
+  const tbody = document.getElementById('calBody');
+  if (!tbody) return;
+
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0,10);
+
+  let filtered = _calFilter === 'all'
+    ? _calEvents
+    : _calEvents.filter(e => e.impact === _calFilter);
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#484f58;">No events found for this filter.</td></tr>`;
+    return;
+  }
+
+  // Group by date
+  const groups = {};
+  filtered.forEach(e => {
+    const d = e.date ? e.date.slice(0,10) : 'unknown';
+    if (!groups[d]) groups[d] = [];
+    groups[d].push(e);
+  });
+
+  let html = '';
+  for (const day of Object.keys(groups).sort()) {
+    const date = new Date(day + 'T12:00:00Z');
+    const isToday = day === todayStr;
+    const label = isToday ? '📌 TODAY — ' : '';
+    const dayLabel = label + date.toLocaleDateString('de-AT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+    html += `<tr style="background:#0d1117;">
+      <td colspan="7" style="padding:10px 16px;font-size:10px;letter-spacing:1.5px;font-weight:700;color:${isToday?'var(--teal)':'#484f58'};text-transform:uppercase;border-top:1px solid #21262d;">${dayLabel}</td>
+    </tr>`;
+
+    for (const ev of groups[day]) {
+      const evDate = new Date(ev.date);
+      const isPast = evDate < now;
+      const timeStr = evDate.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
+      const flag = CAL_FLAGS[ev.country] || '🌍';
+      const impactCfg = {
+        High:   { bg:'rgba(248,81,73,.12)', color:'var(--bear)',   label:'HIGH' },
+        Medium: { bg:'rgba(227,179,65,.12)', color:'var(--yellow)', label:'MED'  },
+        Low:    { bg:'rgba(38,166,154,.1)',  color:'var(--teal)',   label:'LOW'  },
+      }[ev.impact] || { bg:'rgba(255,255,255,.05)', color:'#484f58', label:'—' };
+
+      const actual = ev.actual
+        ? `<span style="color:${parseFloat(ev.actual)>=(parseFloat(ev.forecast||0)||0)?'var(--bull)':'var(--bear)'};font-weight:700">${ev.actual}</span>`
+        : `<span style="color:#30363d">—</span>`;
+
+      html += `<tr style="border-bottom:1px solid #161b22;opacity:${isPast?'.55':'1'};transition:background .15s;" onmouseover="this.style.background='rgba(255,255,255,.02)'" onmouseout="this.style.background='transparent'">
+        <td style="padding:12px 16px;font-family:var(--font-mono);font-size:12px;color:${isPast?'#484f58':'var(--teal)'};white-space:nowrap;">${timeStr}</td>
+        <td style="padding:12px 8px;font-size:13px;font-weight:700;color:var(--text2);white-space:nowrap;">${flag} ${ev.country||'—'}</td>
+        <td style="padding:12px 16px;color:var(--white);font-weight:600;font-size:13px;">${ev.title||'—'}</td>
+        <td style="padding:12px 8px;text-align:center;">
+          <span style="background:${impactCfg.bg};color:${impactCfg.color};padding:3px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:1px;">${impactCfg.label}</span>
+        </td>
+        <td style="padding:12px 16px;text-align:right;font-family:var(--font-mono);font-size:12px;color:#8b949e;">${ev.forecast||'—'}</td>
+        <td style="padding:12px 16px;text-align:right;font-family:var(--font-mono);font-size:12px;color:#484f58;">${ev.previous||'—'}</td>
+        <td style="padding:12px 16px;text-align:right;font-family:var(--font-mono);font-size:12px;">${actual}</td>
+      </tr>`;
+    }
+  }
+  tbody.innerHTML = html;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
