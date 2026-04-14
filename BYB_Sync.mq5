@@ -1,29 +1,25 @@
 //+------------------------------------------------------------------+
-//|  BYB Alpha — MT5 Sync EA                                        |
-//|  Schickt deine Trade-History automatisch an BYB Alpha Dashboard  |
-//|                                                                  |
-//|  SETUP (einmalig):                                               |
-//|  1. EA auf einen beliebigen Chart ziehen (z.B. EURUSD M1)        |
-//|  2. Deinen persönlichen Sync-Token einfügen (aus dem Dashboard)  |
-//|  3. In MT5: Extras → Optionen → Expert Advisors →               |
-//|     "WebRequest erlauben" aktivieren und diese URL hinzufügen:   |
-//|     https://dzlgudlurijmgjwetztf.supabase.co                     |
-//|  4. OK — fertig. Läuft jetzt automatisch im Hintergrund.         |
+//|  BYB Alpha — MT5 Sync EA v1.20                                   |
+//|  Schickt Trade-History + Kontostand an BYB Alpha Dashboard        |
+//|                                                                   |
+//|  SETUP (einmalig):                                                |
+//|  1. EA auf einen beliebigen Chart ziehen (z.B. EURUSD M1)         |
+//|  2. Deinen persönlichen Sync-Token einfügen (aus dem Dashboard)   |
+//|  3. Extras → Optionen → Expert Advisors →                         |
+//|     "WebRequest erlauben" aktivieren, URL hinzufügen:             |
+//|     https://dzlgudlurijmgjwetztf.supabase.co                      |
+//|  4. OK — fertig. Läuft automatisch im Hintergrund.                |
 //+------------------------------------------------------------------+
 #property copyright "BYB Alpha"
-#property version   "1.10"
+#property version   "1.20"
 #property strict
 
-input string SyncToken    = "";   // << Deinen Token hier einfügen (aus BYB Dashboard)
-input int    IntervalSec  = 120;  // Sync alle X Sekunden (Standard: 2 Minuten)
-input bool   ShowAlerts   = true; // Benachrichtigungen anzeigen
+input string SyncToken   = "";    // << Deinen Token hier einfügen
+input int    IntervalSec = 120;   // Sync-Interval in Sekunden (Standard: 2 Min)
+input bool   ShowAlerts  = true;  // Benachrichtigungen anzeigen
 
-// Edge Function URL
 const string API_URL = "https://dzlgudlurijmgjwetztf.supabase.co/functions/v1/sync-trades";
 
-//+------------------------------------------------------------------+
-//| Initialisierung                                                   |
-//+------------------------------------------------------------------+
 int OnInit()
 {
    if(StringLen(SyncToken) < 10)
@@ -31,39 +27,25 @@ int OnInit()
       Alert("BYB Alpha: Bitte Sync-Token eingeben! (EA-Parameter öffnen)");
       return INIT_PARAMETERS_INCORRECT;
    }
-
    EventSetTimer(IntervalSec);
-
-   // Sofort beim Start einmal syncen
    SyncTrades();
-
-   Print("BYB Alpha Sync EA gestartet. Interval: ", IntervalSec, "s");
+   Print("BYB Alpha Sync EA v1.20 gestartet. Interval: ", IntervalSec, "s");
    return INIT_SUCCEEDED;
 }
 
-//+------------------------------------------------------------------+
-//| Deinitialisierung                                                 |
-//+------------------------------------------------------------------+
-void OnDeinit(const int reason)
-{
-   EventKillTimer();
-   Print("BYB Alpha Sync EA gestoppt.");
-}
+void OnDeinit(const int reason) { EventKillTimer(); }
+void OnTimer()                  { SyncTrades(); }
 
-//+------------------------------------------------------------------+
-//| Timer — wird alle IntervalSec aufgerufen                         |
-//+------------------------------------------------------------------+
-void OnTimer()
-{
-   SyncTrades();
-}
-
-//+------------------------------------------------------------------+
-//| Haupt-Sync-Funktion                                              |
 //+------------------------------------------------------------------+
 void SyncTrades()
 {
-   // Gesamte History laden
+   // ── Kontostand & Equity ────────────────────────────────────────
+   double acc_balance     = AccountInfoDouble(ACCOUNT_BALANCE);
+   double acc_equity      = AccountInfoDouble(ACCOUNT_EQUITY);
+   double acc_margin      = AccountInfoDouble(ACCOUNT_MARGIN);
+   double acc_free_margin = AccountInfoDouble(ACCOUNT_FREEMARGIN);
+
+   // ── Trade History laden ────────────────────────────────────────
    datetime from = D'2000.01.01';
    datetime to   = TimeCurrent();
 
@@ -74,7 +56,6 @@ void SyncTrades()
    }
 
    int total = HistoryDealsTotal();
-   if(total == 0) return;
 
    string trades_json = "";
    int    count       = 0;
@@ -84,17 +65,17 @@ void SyncTrades()
       ulong ticket = HistoryDealGetTicket(i);
       if(ticket == 0) continue;
 
-      // Nur abgeschlossene Buy/Sell Deals
       ENUM_DEAL_ENTRY entry_type = (ENUM_DEAL_ENTRY)HistoryDealGetInteger(ticket, DEAL_ENTRY);
       ENUM_DEAL_TYPE  deal_type  = (ENUM_DEAL_TYPE) HistoryDealGetInteger(ticket, DEAL_TYPE);
 
-      if(entry_type != DEAL_ENTRY_OUT)          continue;
-      if(deal_type  == DEAL_TYPE_BALANCE)        continue;
-      if(deal_type  == DEAL_TYPE_CREDIT)         continue;
-      if(deal_type  == DEAL_TYPE_CORRECTION)     continue;
+      // Nur abgeschlossene Handelspositionen
+      if(entry_type != DEAL_ENTRY_OUT)       continue;
+      if(deal_type  == DEAL_TYPE_BALANCE)    continue;
+      if(deal_type  == DEAL_TYPE_CREDIT)     continue;
+      if(deal_type  == DEAL_TYPE_CORRECTION) continue;
 
       string symbol     = HistoryDealGetString (ticket, DEAL_SYMBOL);
-      double price      = HistoryDealGetDouble (ticket, DEAL_PRICE);
+      double exit_price = HistoryDealGetDouble (ticket, DEAL_PRICE);    // Exit-Preis
       double volume     = HistoryDealGetDouble (ticket, DEAL_VOLUME);
       double profit     = HistoryDealGetDouble (ticket, DEAL_PROFIT);
       double commission = HistoryDealGetDouble (ticket, DEAL_COMMISSION);
@@ -102,11 +83,15 @@ void SyncTrades()
       long   close_ts   = HistoryDealGetInteger(ticket, DEAL_TIME);
       long   position_id= HistoryDealGetInteger(ticket, DEAL_POSITION_ID);
       string comment    = HistoryDealGetString (ticket, DEAL_COMMENT);
-      string direction  = (deal_type == DEAL_TYPE_BUY) ? "buy" : "sell";
 
-      // Eröffnungszeit über position_id suchen
-      long open_ts = 0;
-      long hold_s  = 0;
+      // ── Eröffnungs-Deal suchen → Entry-Preis + echte Direction ──
+      long   open_ts    = close_ts;  // Fallback
+      long   hold_s     = 0;
+      double entry_price = exit_price; // Fallback
+      // Direction aus dem SCHLIESS-Deal ist invertiert (sell=Long, buy=Short)
+      // Wir suchen den ÖFFNUNGS-Deal um die echte Direction zu bekommen
+      string direction  = (deal_type == DEAL_TYPE_SELL) ? "sell" : "buy"; // Fallback (invertiert!)
+
       if(position_id > 0)
       {
          for(int j = 0; j < total; j++)
@@ -116,52 +101,76 @@ void SyncTrades()
             if(HistoryDealGetInteger(t2, DEAL_POSITION_ID) != position_id) continue;
             if((ENUM_DEAL_ENTRY)HistoryDealGetInteger(t2, DEAL_ENTRY) == DEAL_ENTRY_IN)
             {
-               open_ts = HistoryDealGetInteger(t2, DEAL_TIME);
-               hold_s  = close_ts - open_ts;
+               open_ts     = HistoryDealGetInteger(t2, DEAL_TIME);
+               hold_s      = close_ts - open_ts;
+               entry_price = HistoryDealGetDouble (t2, DEAL_PRICE);
+               // BUY-Deal beim Öffnen = LONG-Position; SELL-Deal beim Öffnen = SHORT
+               ENUM_DEAL_TYPE open_type = (ENUM_DEAL_TYPE)HistoryDealGetInteger(t2, DEAL_TYPE);
+               direction = (open_type == DEAL_TYPE_BUY) ? "buy" : "sell";
                break;
             }
          }
       }
-      if(open_ts == 0) open_ts = close_ts;
 
-      // JSON für diesen Trade aufbauen
-      string escape_comment = comment;
-      StringReplace(escape_comment, "\"", "'");
+      // Anführungszeichen im Kommentar escapen
+      StringReplace(comment, "\"", "'");
 
-      string trade = StringFormat(
-         "{\"ticket\":%I64u,\"position_id\":%I64d,\"symbol\":\"%s\","
-         "\"direction\":\"%s\",\"entry\":%.5f,\"exit_price\":%.5f,"
-         "\"volume\":%.2f,\"profit\":%.2f,\"commission\":%.2f,\"swap\":%.2f,"
-         "\"open_time\":%I64d,\"close_time\":%I64d,\"hold_secs\":%I64d,"
-         "\"comment\":\"%s\"}",
-         ticket, position_id, symbol,
-         direction, price, price,
-         volume, profit, commission, swap_val,
-         open_ts, close_ts, hold_s,
-         escape_comment
-      );
+      // Preisformat: Gold/BTC 2 Dezimalstellen, sonst 5
+      bool is_crypto_or_metal = (StringFind(symbol, "XAU") >= 0 ||
+                                  StringFind(symbol, "BTC") >= 0 ||
+                                  StringFind(symbol, "ETH") >= 0 ||
+                                  StringFind(symbol, "XAG") >= 0);
+
+      string trade;
+      if(is_crypto_or_metal)
+         trade = StringFormat(
+            "{\"ticket\":%I64u,\"position_id\":%I64d,\"symbol\":\"%s\","
+            "\"direction\":\"%s\",\"entry\":%.2f,\"exit_price\":%.2f,"
+            "\"volume\":%.2f,\"profit\":%.2f,\"commission\":%.2f,\"swap\":%.2f,"
+            "\"open_time\":%I64d,\"close_time\":%I64d,\"hold_secs\":%I64d,"
+            "\"comment\":\"%s\"}",
+            ticket, position_id, symbol,
+            direction, entry_price, exit_price,
+            volume, profit, commission, swap_val,
+            open_ts, close_ts, hold_s, comment);
+      else
+         trade = StringFormat(
+            "{\"ticket\":%I64u,\"position_id\":%I64d,\"symbol\":\"%s\","
+            "\"direction\":\"%s\",\"entry\":%.5f,\"exit_price\":%.5f,"
+            "\"volume\":%.2f,\"profit\":%.2f,\"commission\":%.2f,\"swap\":%.2f,"
+            "\"open_time\":%I64d,\"close_time\":%I64d,\"hold_secs\":%I64d,"
+            "\"comment\":\"%s\"}",
+            ticket, position_id, symbol,
+            direction, entry_price, exit_price,
+            volume, profit, commission, swap_val,
+            open_ts, close_ts, hold_s, comment);
 
       if(count > 0) trades_json += ",";
       trades_json += trade;
       count++;
 
-      // Max 200 Trades pro Batch (verhindert zu große Requests)
-      if(count >= 200) break;
+      if(count >= 500) break;  // Max 500 Trades pro Batch
    }
 
-   if(count == 0)
-   {
-      Print("BYB: Keine abgeschlossenen Trades gefunden.");
-      return;
-   }
+   // ── JSON-Payload: Kontostand + Trades ─────────────────────────
+   string payload;
+   if(count > 0)
+      payload = StringFormat(
+         "{\"token\":\"%s\","
+         "\"balance\":%.2f,\"equity\":%.2f,\"margin\":%.2f,\"free_margin\":%.2f,"
+         "\"trades\":[%s]}",
+         SyncToken,
+         acc_balance, acc_equity, acc_margin, acc_free_margin,
+         trades_json);
+   else
+      payload = StringFormat(
+         "{\"token\":\"%s\","
+         "\"balance\":%.2f,\"equity\":%.2f,\"margin\":%.2f,\"free_margin\":%.2f,"
+         "\"trades\":[]}",
+         SyncToken,
+         acc_balance, acc_equity, acc_margin, acc_free_margin);
 
-   // JSON-Payload zusammenbauen
-   string payload = StringFormat(
-      "{\"token\":\"%s\",\"trades\":[%s]}",
-      SyncToken, trades_json
-   );
-
-   // HTTP POST senden
+   // ── HTTP POST ──────────────────────────────────────────────────
    char   post_data[];
    char   result_data[];
    string result_headers;
@@ -172,30 +181,27 @@ void SyncTrades()
    StringToCharArray(payload, post_data, 0, payload_len);
 
    int http_code = WebRequest(
-      "POST",
-      API_URL,
-      req_headers,
-      5000,
-      post_data,
-      result_data,
-      result_headers
-   );
+      "POST", API_URL, req_headers, 5000,
+      post_data, result_data, result_headers);
 
    string response = CharArrayToString(result_data);
 
    if(http_code == 200 || http_code == 201)
    {
-      Print("BYB Sync ✓ — ", count, " Trades gesendet. Response: ", response);
-      if(ShowAlerts && StringFind(response, "\"synced\"") >= 0)
-         Comment("BYB Alpha ✓  Letzter Sync: ", TimeToString(TimeCurrent(), TIME_DATE|TIME_MINUTES));
+      Print("BYB Sync OK — ", count, " Trades + Kontostand $",
+            DoubleToString(acc_balance, 2), " gesendet.");
+      if(ShowAlerts)
+         Comment("BYB Alpha ✓  Kontostand: $", DoubleToString(acc_balance, 2),
+                 "  |  Equity: $", DoubleToString(acc_equity, 2),
+                 "  |  Letzter Sync: ", TimeToString(TimeCurrent(), TIME_DATE|TIME_MINUTES));
    }
    else if(http_code == -1)
    {
       Print("BYB Sync Fehler: WebRequest nicht erlaubt.");
-      Print("→ Gehe zu: Extras → Optionen → Expert Advisors → WebRequest aktivieren");
-      Print("→ URL hinzufügen: https://dzlgudlurijmgjwetztf.supabase.co");
+      Print("→ Extras → Optionen → Expert Advisors → WebRequest + URL hinzufügen:");
+      Print("→ https://dzlgudlurijmgjwetztf.supabase.co");
       if(ShowAlerts)
-         Alert("BYB Alpha: WebRequest nicht aktiviert! Siehe MT5-Log für Anleitung.");
+         Alert("BYB Alpha: WebRequest nicht aktiviert! Siehe MT5-Log.");
    }
    else
    {
