@@ -3599,7 +3599,7 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
 <!-- ============================================================ JAVASCRIPT ============================================================ -->
 <script>
 /* ====== PAGE ROUTING ====== */
-const pages = ['home','dashboard','journal','platforms','countries','about','faq','ai-support','calendar','contact'];
+const pages = ['home','dashboard','journal','platforms','countries','about','faq','ai-support','calendar','alphaforge','contact'];
 
 function showPage(id) {
   pages.forEach(p => document.getElementById('page-' + p).classList.remove('active'));
@@ -5826,7 +5826,7 @@ const TRANSLATIONS = {
     // Navigation
     'nav-home':'Home','nav-dashboard':'Bot Performance','nav-journal':'AlphaJournal','nav-platforms':'Platforms',
     'nav-countries':'Countries','nav-about':'About','nav-faq':'FAQ',
-    'nav-ai-support':'AI Support','nav-calendar':'Calendar','nav-contact':'Contact',
+    'nav-ai-support':'AI Support','nav-calendar':'Calendar','nav-alphaforge':'AlphaForge','nav-contact':'Contact',
     'nav-login':'Login','nav-get-started':'Get Started','nav-logout':'Logout',
     // Hero
     'hero-live-text':'ACTIVE TRADERS',
@@ -5891,7 +5891,7 @@ const TRANSLATIONS = {
     // Navigation
     'nav-home':'Startseite','nav-dashboard':'Bot Performance','nav-journal':'AlphaJournal','nav-platforms':'Plattformen',
     'nav-countries':'Länder','nav-about':'Über uns','nav-faq':'FAQ',
-    'nav-ai-support':'AI Support','nav-calendar':'Kalender','nav-contact':'Kontakt',
+    'nav-ai-support':'AI Support','nav-calendar':'Kalender','nav-alphaforge':'AlphaForge','nav-contact':'Kontakt',
     'nav-login':'Login','nav-get-started':'Loslegen','nav-logout':'Abmelden',
     // Hero
     'hero-live-text':'AKTIVE TRADER',
@@ -5956,7 +5956,7 @@ const TRANSLATIONS = {
     // Navigation
     'nav-home':'Inicio','nav-dashboard':'Bot Performance','nav-journal':'AlphaJournal','nav-platforms':'Plataformas',
     'nav-countries':'Países','nav-about':'Sobre nosotros','nav-faq':'FAQ',
-    'nav-ai-support':'AI Support','nav-calendar':'Calendario','nav-contact':'Contacto',
+    'nav-ai-support':'AI Support','nav-calendar':'Calendario','nav-alphaforge':'AlphaForge','nav-contact':'Contacto',
     'nav-login':'Login','nav-get-started':'Comenzar','nav-logout':'Cerrar sesión',
     // Hero
     'hero-live-text':'TRADERS ACTIVOS',
@@ -6021,7 +6021,7 @@ const TRANSLATIONS = {
     // Navigation
     'nav-home':'Accueil','nav-dashboard':'Bot Performance','nav-journal':'AlphaJournal','nav-platforms':'Plateformes',
     'nav-countries':'Pays','nav-about':'À propos','nav-faq':'FAQ',
-    'nav-ai-support':'AI Support','nav-calendar':'Calendrier','nav-contact':'Contact',
+    'nav-ai-support':'AI Support','nav-calendar':'Calendrier','nav-alphaforge':'AlphaForge','nav-contact':'Contact',
     'nav-login':'Login','nav-get-started':'Démarrer','nav-logout':'Déconnexion',
     // Hero
     'hero-live-text':'TRADERS ACTIFS',
@@ -6096,7 +6096,8 @@ const TRANSLATION_MAP = [
   { id: null, selector: '#desktopNav .nav-btn:nth-child(7)',  key: 'nav-faq' },
   { id: null, selector: '#desktopNav .nav-btn:nth-child(8)',  key: 'nav-ai-support' },
   { id: null, selector: '#desktopNav .nav-btn:nth-child(9)',  key: 'nav-calendar' },
-  { id: null, selector: '#desktopNav .nav-btn:nth-child(10)', key: 'nav-contact' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(10)', key: 'nav-alphaforge' },
+  { id: null, selector: '#desktopNav .nav-btn:nth-child(11)', key: 'nav-contact' },
   // ── Mobile Navigation ──
   { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(1)',  key: 'nav-home' },
   { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(2)',  key: 'nav-dashboard' },
@@ -6107,7 +6108,8 @@ const TRANSLATION_MAP = [
   { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(7)',  key: 'nav-faq' },
   { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(8)',  key: 'nav-ai-support' },
   { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(9)',  key: 'nav-calendar' },
-  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(10)', key: 'nav-contact' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(10)', key: 'nav-alphaforge' },
+  { id: null, selector: '#mobileNav .mobile-nav-inner .mobile-nav-btn:nth-child(11)', key: 'nav-contact' },
   // ── Nav CTA ──
   { id: null, selector: '#navLoggedOut .btn-ghost',   key: 'nav-login' },
   { id: null, selector: '#navLoggedOut .btn-primary', key: 'nav-get-started' },
