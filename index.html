@@ -5368,6 +5368,141 @@ function updateDarkModeBtn() {
   setTimeout(updateDarkModeBtn, 0);
 })();
 
+
+  // ── Calendar constants ──────────────────────────────────────────
+  const CAL_API = 'https://dzlgudlurijmgjwetztf.supabase.co/functions/v1/get-calendar';
+  const CAL_FLAGS = {
+    USD:'🇺🇸', EUR:'🇪🇺', GBP:'🇬🇧', JPY:'🇯🇵', AUD:'🇦🇺',
+    CAD:'🇨🇦', CHF:'🇨🇭', NZD:'🇳🇿', CNY:'🇨🇳', SGD:'🇸🇬',
+    HKD:'🇭🇰', MXN:'🇲🇽', NOK:'🇳🇴', SEK:'🇸🇪', ALL:'🌍'
+  };
+  let _calEvents = [];
+  let _calFilter = 'all';
+  let _calLoaded = false;
+
+  function buildTable(tbodyId, rows) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:#484f58;">No data</td></tr>'; return; }
+    tbody.innerHTML = rows.map(r => {
+      const pc = r.pnl >= 0 ? 'var(--bull)' : 'var(--bear)';
+      return `<tr style="border-bottom:1px solid #161b22;">
+        <td style="padding:7px 8px;color:var(--text2);">${r.label}</td>
+        <td style="padding:7px 8px;text-align:right;color:#8b949e;">${r.count}</td>
+        <td style="padding:7px 8px;text-align:right;color:${r.wr>=50?'var(--bull)':'var(--bear)'};">${r.wr.toFixed(0)}%</td>
+        <td style="padding:7px 8px;text-align:right;color:${pc};font-family:var(--font-mono);">${(r.pnl>=0?'+':'')+'$'+Math.abs(r.pnl).toFixed(2)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function loadCalendar(force = false) {
+    if (_calLoaded && !force) return;
+    const tbody = document.getElementById('calBody');
+    if (!tbody) return;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:48px;color:#484f58;">
+      <div style="font-size:28px;margin-bottom:12px;animation:pulse 1.5s infinite;">📡</div>
+      <div style="font-size:14px;font-weight:600;color:#8b949e;">Loading live data from ForexFactory…</div>
+    </td></tr>`;
+    try {
+      const res = await fetch(CAL_API);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const json = await res.json();
+      _calEvents = json.events || [];
+      _calLoaded = true;
+      const el = id => document.getElementById(id);
+      if (el('calTodayHigh'))  el('calTodayHigh').textContent  = json.meta?.today_high ?? '0';
+      if (el('calWeekHigh'))   el('calWeekHigh').textContent   = json.meta?.week_high  ?? '0';
+      if (el('calTotal'))      el('calTotal').textContent      = json.meta?.total      ?? '0';
+      const nh = json.meta?.next_high;
+      if (nh && el('calNextName')) {
+        el('calNextName').textContent = nh.title || '—';
+        const d = new Date(nh.date);
+        el('calNextTime').textContent = d.toLocaleDateString('de-AT',{weekday:'short',day:'numeric',month:'short'})
+          + ' · ' + d.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
+      }
+      if (el('calFetchedAt') && json.meta?.fetched_at) {
+        const ft = new Date(json.meta.fetched_at);
+        el('calFetchedAt').textContent = 'Updated ' + ft.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
+      }
+      calRender();
+    } catch(e) {
+      console.error('[Calendar]', e);
+      const tbody2 = document.getElementById('calBody');
+      if (tbody2) tbody2.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:48px;color:#484f58;">
+        <div style="font-size:28px;margin-bottom:12px;">⚠️</div>
+        <div style="font-size:14px;font-weight:600;color:#8b949e;">Could not load calendar data.</div>
+        <div style="font-size:12px;margin-top:8px;">Check your connection or <button onclick="loadCalendar(true)" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:12px;">try again</button></div>
+      </td></tr>`;
+    }
+  }
+
+  function calFilter(impact, btn) {
+    _calFilter = impact;
+    ['all','High','Medium','Low'].forEach(k => {
+      const b = document.getElementById('calF-' + k);
+      if (!b) return;
+      const active = k === impact;
+      b.style.border     = active ? '1px solid var(--teal)' : '1px solid #30363d';
+      b.style.background = active ? 'rgba(38,166,154,.15)' : 'transparent';
+      b.style.color      = active ? 'var(--teal)' : '#8b949e';
+    });
+    calRender();
+  }
+
+  function calRender() {
+    const tbody = document.getElementById('calBody');
+    if (!tbody) return;
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0,10);
+    let filtered = _calFilter === 'all' ? _calEvents : _calEvents.filter(e => e.impact === _calFilter);
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#484f58;">No events found for this filter.</td></tr>`;
+      return;
+    }
+    const groups = {};
+    filtered.forEach(e => {
+      const d = e.date ? e.date.slice(0,10) : 'unknown';
+      if (!groups[d]) groups[d] = [];
+      groups[d].push(e);
+    });
+    let html = '';
+    for (const day of Object.keys(groups).sort()) {
+      const date = new Date(day + 'T12:00:00Z');
+      const isToday = day === todayStr;
+      const label = isToday ? '📌 TODAY — ' : '';
+      const dayLabel = label + date.toLocaleDateString('de-AT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+      html += `<tr style="background:#0d1117;">
+        <td colspan="7" style="padding:10px 16px;font-size:10px;letter-spacing:1.5px;font-weight:700;color:${isToday?'var(--teal)':'#484f58'};text-transform:uppercase;border-top:1px solid #21262d;">${dayLabel}</td>
+      </tr>`;
+      for (const ev of groups[day]) {
+        const evDate = new Date(ev.date);
+        const isPast = evDate < now;
+        const timeStr = evDate.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
+        const flag = CAL_FLAGS[ev.country] || '🌍';
+        const impactCfg = {
+          High:   { bg:'rgba(248,81,73,.12)', color:'var(--bear)',   label:'HIGH' },
+          Medium: { bg:'rgba(227,179,65,.12)', color:'var(--yellow)', label:'MED'  },
+          Low:    { bg:'rgba(38,166,154,.1)',  color:'var(--teal)',   label:'LOW'  },
+        }[ev.impact] || { bg:'rgba(255,255,255,.05)', color:'#484f58', label:'—' };
+        const actual = ev.actual
+          ? `<span style="color:${parseFloat(ev.actual)>=(parseFloat(ev.forecast||0)||0)?'var(--bull)':'var(--bear)'};font-weight:700">${ev.actual}</span>`
+          : `<span style="color:#30363d">—</span>`;
+        html += `<tr style="border-bottom:1px solid #161b22;opacity:${isPast?'.55':'1'};transition:background .15s;" onmouseover="this.style.background='rgba(255,255,255,.02)'" onmouseout="this.style.background='transparent'">
+          <td style="padding:12px 16px;font-family:var(--font-mono);font-size:12px;color:${isPast?'#484f58':'var(--teal)'};white-space:nowrap;">${timeStr}</td>
+          <td style="padding:12px 8px;font-size:13px;font-weight:700;color:var(--text2);white-space:nowrap;">${flag} ${ev.country||'—'}</td>
+          <td style="padding:12px 16px;color:var(--white);font-weight:600;font-size:13px;">${ev.title||'—'}</td>
+          <td style="padding:12px 8px;text-align:center;">
+            <span style="background:${impactCfg.bg};color:${impactCfg.color};padding:3px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:1px;">${impactCfg.label}</span>
+          </td>
+          <td style="padding:12px 16px;text-align:right;font-family:var(--font-mono);font-size:12px;color:#8b949e;">${ev.forecast||'—'}</td>
+          <td style="padding:12px 16px;text-align:right;font-family:var(--font-mono);font-size:12px;color:#484f58;">${ev.previous||'—'}</td>
+          <td style="padding:12px 16px;text-align:right;font-family:var(--font-mono);font-size:12px;">${actual}</td>
+        </tr>`;
+      }
+    }
+    tbody.innerHTML = html;
+  }
+
 </script>
 
 <!-- ====== MT5 ADD ACCOUNT MODAL ====== -->
