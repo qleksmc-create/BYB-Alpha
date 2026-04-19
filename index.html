@@ -71,11 +71,11 @@ button{cursor:pointer;border:none;font-family:var(--font-sans)}
   color:var(--white);line-height:1;
 }
 .logo-wordmark em{color:var(--teal);font-style:normal}
-.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links{display:flex;align-items:center;gap:1px;overflow:hidden;flex:1;min-width:0}
 .nav-btn{
-  background:none;border:none;padding:6px 14px;
-  font-family:var(--font-sans);font-size:13px;font-weight:500;
-  color:var(--text2);border-radius:6px;transition:all .15s;white-space:nowrap;
+  background:none;border:none;padding:5px 9px;
+  font-family:var(--font-sans);font-size:12px;font-weight:500;
+  color:var(--text2);border-radius:6px;transition:all .15s;white-space:nowrap;flex-shrink:0;
 }
 .nav-btn:hover,.nav-btn.active{color:var(--white);background:var(--bg3)}
 .nav-btn.active{color:var(--teal)}
