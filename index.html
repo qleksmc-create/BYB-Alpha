@@ -1417,12 +1417,12 @@ footer{background:#060a0e;border-top:1px solid var(--border)}
     <div class="auth-form" id="formLogin">
       <div>
         <label class="auth-label" id="lbl-login-email">Email</label>
-        <input class="auth-input" type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email"/>
+        <input class="auth-input" type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" onkeydown="if(event.key==='Enter') handleLogin()"/>
       </div>
       <div>
         <label class="auth-label" id="lbl-login-pw">Password</label>
         <div class="pw-wrap">
-          <input class="auth-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/>
+          <input class="auth-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') handleLogin()"/>
           <button type="button" class="pw-eye" onclick="togglePwVis('loginPassword',this)" title="Show/hide password">👁</button>
         </div>
       </div>
